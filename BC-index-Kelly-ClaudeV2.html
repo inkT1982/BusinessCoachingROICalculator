@@ -839,15 +839,14 @@
                     </div>
 
                     <div class="field">
-                      <label for="annualRevenue">Annual revenue (optional)</label>
+                      <label for="annualRevenue">Annual revenue</label>
                       <input id="annualRevenue" type="number" min="0" placeholder="e.g. 50000000" />
                       <div class="helper-text">
-                        Helps estimate profit improvement from coaching.
+                        Leave blank to apply the industry benchmark automatically.
                       </div>
                       <div class="benchmark-hint" id="revenueHint">
                         <span class="benchmark-hint-icon">📊</span>
                         <span class="benchmark-hint-text" id="revenueHintText"></span>
-                        <button class="benchmark-use-btn" type="button" id="revenueUseBtn">Use benchmark</button>
                       </div>
                     </div>
                   </div>
@@ -907,10 +906,12 @@
                     <div class="field">
                       <label for="avgSalary">Average salary per coachee</label>
                       <input id="avgSalary" type="number" min="1000" placeholder="e.g. 100000" />
+                      <div class="helper-text">
+                        Leave blank to apply the industry benchmark automatically.
+                      </div>
                       <div class="benchmark-hint" id="salaryHint">
                         <span class="benchmark-hint-icon">📊</span>
                         <span class="benchmark-hint-text" id="salaryHintText"></span>
-                        <button class="benchmark-use-btn" type="button" id="salaryUseBtn">Use benchmark</button>
                       </div>
                     </div>
                   </div>
@@ -929,14 +930,13 @@
                   <div class="form-grid">
                     <div class="field">
                       <label for="costPerCoachee">Cost per coachee</label>
-                      <input id="costPerCoachee" type="number" min="0" placeholder="e.g. 2400" value="2400" />
+                      <input id="costPerCoachee" type="number" min="0" placeholder="e.g. 2400" />
                       <div class="helper-text">
-                        Pre-filled with typical benchmark cost.
+                        Leave blank to apply the industry benchmark automatically.
                       </div>
                       <div class="benchmark-hint" id="costHint">
                         <span class="benchmark-hint-icon">📊</span>
                         <span class="benchmark-hint-text" id="costHintText"></span>
-                        <button class="benchmark-use-btn" type="button" id="costUseBtn">Use benchmark</button>
                       </div>
                     </div>
                   </div>
@@ -982,14 +982,13 @@
                   <div class="form-grid">
                     <div class="field">
                       <label for="currentTurnover">Current annual turnover rate (%)</label>
-                      <input id="currentTurnover" type="number" min="0" max="100" step="0.1" placeholder="e.g. 13" value="13" />
+                      <input id="currentTurnover" type="number" min="0" max="100" step="0.1" placeholder="e.g. 13" />
                       <div class="helper-text">
-                        The percentage of employees who leave annually.
+                        Leave blank to apply the industry benchmark automatically.
                       </div>
                       <div class="benchmark-hint" id="turnoverHint">
                         <span class="benchmark-hint-icon">📊</span>
                         <span class="benchmark-hint-text" id="turnoverHintText"></span>
-                        <button class="benchmark-use-btn" type="button" id="turnoverUseBtn">Use benchmark</button>
                       </div>
                     </div>
                   </div>
@@ -1198,10 +1197,10 @@
       var turnoverHint  = qs("#turnoverHint");
 
       if (industry && industry in INDUSTRY_REVENUE) {
-        qs("#revenueHintText").textContent  = INDUSTRY_REVENUE[industry].label;
-        qs("#salaryHintText").textContent   = INDUSTRY_SALARY[industry].label;
-        qs("#costHintText").textContent     = INDUSTRY_COST[industry].label;
-        qs("#turnoverHintText").textContent = INDUSTRY_TURNOVER_BASELINE[industry].label;
+        qs("#revenueHintText").textContent  = "Auto-applied if blank: " + INDUSTRY_REVENUE[industry].label;
+        qs("#salaryHintText").textContent   = "Auto-applied if blank: " + INDUSTRY_SALARY[industry].label;
+        qs("#costHintText").textContent     = "Auto-applied if blank: " + INDUSTRY_COST[industry].label;
+        qs("#turnoverHintText").textContent = "Auto-applied if blank: " + INDUSTRY_TURNOVER_BASELINE[industry].label;
         revenueHint.classList.add("visible");
         salaryHint.classList.add("visible");
         costHint.classList.add("visible");
@@ -1214,27 +1213,7 @@
       }
     }
 
-    // Wire up "Use benchmark" buttons
-    qs("#revenueUseBtn").addEventListener("click", function() {
-      if (selectedIndustry && selectedIndustry in INDUSTRY_REVENUE) {
-        qs("#annualRevenue").value = INDUSTRY_REVENUE[selectedIndustry].val;
-      }
-    });
-    qs("#salaryUseBtn").addEventListener("click", function() {
-      if (selectedIndustry && selectedIndustry in INDUSTRY_SALARY) {
-        qs("#avgSalary").value = INDUSTRY_SALARY[selectedIndustry].val;
-      }
-    });
-    qs("#costUseBtn").addEventListener("click", function() {
-      if (selectedIndustry && selectedIndustry in INDUSTRY_COST) {
-        qs("#costPerCoachee").value = INDUSTRY_COST[selectedIndustry].val;
-      }
-    });
-    qs("#turnoverUseBtn").addEventListener("click", function() {
-      if (selectedIndustry && selectedIndustry in INDUSTRY_TURNOVER_BASELINE) {
-        qs("#currentTurnover").value = INDUSTRY_TURNOVER_BASELINE[selectedIndustry].val;
-      }
-    });
+    // Wire up "Use benchmark" buttons — removed (benchmarks now apply automatically)
     // Based on 2024-2025 industry research on executive coaching impact
     // These are the % of current turnover reduction from coaching
     var INDUSTRY_TURNOVER_REDUCTION = {
@@ -1337,20 +1316,29 @@
     function calculateROI() {
       clearError();
 
-      var numEmployees = Number(qs("#numEmployees").value) || 0;
-      var annualRevenue = Number(qs("#annualRevenue").value) || 0;
-      var numCoachees = Number(qs("#numCoachees").value) || 0;
-      var avgSalary = Number(qs("#avgSalary").value) || 0;
-      var currentTurnover = Number(qs("#currentTurnover").value) || 0;
-      var costPerCoachee = Number(qs("#costPerCoachee").value) || 0;
+      var industry = qs("#industry").value;
 
-      // Validation
+      // Read raw field values
+      var annualRevenueRaw  = qs("#annualRevenue").value.trim();
+      var avgSalaryRaw      = qs("#avgSalary").value.trim();
+      var currentTurnoverRaw = qs("#currentTurnover").value.trim();
+      var costPerCoacheeRaw  = qs("#costPerCoachee").value.trim();
+
+      var numEmployees = Number(qs("#numEmployees").value) || 0;
+      var numCoachees  = Number(qs("#numCoachees").value) || 0;
+
+      // Auto-apply industry benchmarks for any blank field
+      var annualRevenue  = annualRevenueRaw !== ""   ? Number(annualRevenueRaw)   : (industry && INDUSTRY_REVENUE[industry]          ? INDUSTRY_REVENUE[industry].val          : 0);
+      var avgSalary      = avgSalaryRaw !== ""       ? Number(avgSalaryRaw)       : (industry && INDUSTRY_SALARY[industry]           ? INDUSTRY_SALARY[industry].val           : 0);
+      var currentTurnover = currentTurnoverRaw !== "" ? Number(currentTurnoverRaw) : (industry && INDUSTRY_TURNOVER_BASELINE[industry] ? INDUSTRY_TURNOVER_BASELINE[industry].val : 13);
+      var costPerCoachee = costPerCoacheeRaw !== ""  ? Number(costPerCoacheeRaw)  : (industry && INDUSTRY_COST[industry]             ? INDUSTRY_COST[industry].val             : 2400);
+
+      // Validation — only hard-require industry, employees, coachees
       var messages = [];
-      if (!qs("#industry").value) messages.push("Select your industry.");
+      if (!industry) messages.push("Select your industry.");
       if (numEmployees <= 0) messages.push("Enter total employees.");
       if (numCoachees <= 0) messages.push("Enter number of coachees.");
-      if (avgSalary <= 0) messages.push("Enter average salary per coachee.");
-      if (currentTurnover < 0 || currentTurnover > 100) messages.push("Turnover rate must be 0-100%.");
+      if (currentTurnover < 0 || currentTurnover > 100) messages.push("Turnover rate must be 0–100%.");
       if (costPerCoachee < 0) messages.push("Cost per coachee cannot be negative.");
 
       if (messages.length > 0) {
@@ -1360,10 +1348,9 @@
 
       // ===== CALCULATIONS (Industry Benchmark-Based) =====
       // Turnover reduction is based on industry research and coaching effectiveness studies
-      var industry = qs("#industry").value;
       var turnoverReduction = (industry in INDUSTRY_TURNOVER_REDUCTION) 
         ? INDUSTRY_TURNOVER_REDUCTION[industry] 
-        : 20;  // Default fallback
+        : 17;  // Global average fallback
 
       // 1. Direct impact: Coachees retained
       var postTurnover = currentTurnover * (1 - turnoverReduction / 100);
@@ -1417,8 +1404,8 @@
       qs("#annualRevenue").value = "";
       qs("#numCoachees").value = "";
       qs("#avgSalary").value = "";
-      qs("#currentTurnover").value = "13";
-      qs("#costPerCoachee").value = "2400";
+      qs("#currentTurnover").value = "";
+      qs("#costPerCoachee").value = "";
 
       selectedIndustry = '';
       selectedTurnoverReduction = 0;
