@@ -1127,102 +1127,391 @@
       return document.querySelectorAll(selector);
     };
 
-    // ===== INDUSTRY FIELD BENCHMARKS =====
-    // Annual revenue benchmarks (USD, typical mid-market company per industry)
-    var INDUSTRY_REVENUE = {
-      "banking_finance":       { val: 500000000, label: "Typical mid-market: ~$500M" },
-      "healthcare_pharma":     { val: 300000000, label: "Typical mid-market: ~$300M" },
-      "it":                    { val: 200000000, label: "Typical mid-market: ~$200M" },
-      "professional_services": { val: 150000000, label: "Typical mid-market: ~$150M" },
-      "manufacturing_hitech":  { val: 250000000, label: "Typical mid-market: ~$250M" },
-      "retail":                { val: 400000000, label: "Typical mid-market: ~$400M" },
-      "hospitality":           { val: 120000000, label: "Typical mid-market: ~$120M" },
-      "education":             { val: 80000000,  label: "Typical mid-market: ~$80M" },
-      "automotive":            { val: 350000000, label: "Typical mid-market: ~$350M" },
-      "energy":                { val: 400000000, label: "Typical mid-market: ~$400M" },
-      "telecommunication":     { val: 500000000, label: "Typical mid-market: ~$500M" },
-      "nonprofit":             { val: 30000000,  label: "Typical mid-size NGO: ~$30M" },
-      "public_sector":         { val: 100000000, label: "Typical agency budget: ~$100M" },
-      "entertainment":         { val: 150000000, label: "Typical mid-market: ~$150M" },
-      "oil_gas":               { val: 600000000, label: "Typical mid-market: ~$600M" },
-      "transport_logistics":   { val: 200000000, label: "Typical mid-market: ~$200M" },
-      "other":                 { val: 271000000, label: "Global cross-industry average: ~$271M" }
+    // ===== REGIONAL × INDUSTRY BENCHMARKS =====
+    // All five benchmark tables are keyed by region, then by industry.
+    // EMEA values are the original baseline. NA, APAC, LATAM have independent values.
+
+    // ── Annual Revenue (typical mid-market company) ───────────────────────────
+    var REGIONAL_REVENUE = {
+      emea: {
+        "banking_finance":       { val: 500000000, label: "Typical mid-market: ~$500M" },
+        "healthcare_pharma":     { val: 300000000, label: "Typical mid-market: ~$300M" },
+        "it":                    { val: 200000000, label: "Typical mid-market: ~$200M" },
+        "professional_services": { val: 150000000, label: "Typical mid-market: ~$150M" },
+        "manufacturing_hitech":  { val: 250000000, label: "Typical mid-market: ~$250M" },
+        "retail":                { val: 400000000, label: "Typical mid-market: ~$400M" },
+        "hospitality":           { val: 120000000, label: "Typical mid-market: ~$120M" },
+        "education":             { val: 80000000,  label: "Typical mid-market: ~$80M" },
+        "automotive":            { val: 350000000, label: "Typical mid-market: ~$350M" },
+        "energy":                { val: 400000000, label: "Typical mid-market: ~$400M" },
+        "telecommunication":     { val: 500000000, label: "Typical mid-market: ~$500M" },
+        "nonprofit":             { val: 30000000,  label: "Typical mid-size NGO: ~$30M" },
+        "public_sector":         { val: 100000000, label: "Typical agency budget: ~$100M" },
+        "entertainment":         { val: 150000000, label: "Typical mid-market: ~$150M" },
+        "oil_gas":               { val: 600000000, label: "Typical mid-market: ~$600M" },
+        "transport_logistics":   { val: 200000000, label: "Typical mid-market: ~$200M" },
+        "other":                 { val: 271000000, label: "EMEA cross-industry average: ~$271M" }
+      },
+      na: {
+        "banking_finance":       { val: 750000000, label: "Typical mid-market: ~$750M" },
+        "healthcare_pharma":     { val: 450000000, label: "Typical mid-market: ~$450M" },
+        "it":                    { val: 350000000, label: "Typical mid-market: ~$350M" },
+        "professional_services": { val: 220000000, label: "Typical mid-market: ~$220M" },
+        "manufacturing_hitech":  { val: 380000000, label: "Typical mid-market: ~$380M" },
+        "retail":                { val: 600000000, label: "Typical mid-market: ~$600M" },
+        "hospitality":           { val: 180000000, label: "Typical mid-market: ~$180M" },
+        "education":             { val: 120000000, label: "Typical mid-market: ~$120M" },
+        "automotive":            { val: 500000000, label: "Typical mid-market: ~$500M" },
+        "energy":                { val: 650000000, label: "Typical mid-market: ~$650M" },
+        "telecommunication":     { val: 700000000, label: "Typical mid-market: ~$700M" },
+        "nonprofit":             { val: 50000000,  label: "Typical mid-size NGO: ~$50M" },
+        "public_sector":         { val: 150000000, label: "Typical agency budget: ~$150M" },
+        "entertainment":         { val: 250000000, label: "Typical mid-market: ~$250M" },
+        "oil_gas":               { val: 900000000, label: "Typical mid-market: ~$900M" },
+        "transport_logistics":   { val: 300000000, label: "Typical mid-market: ~$300M" },
+        "other":                 { val: 400000000, label: "NA cross-industry average: ~$400M" }
+      },
+      apac: {
+        "banking_finance":       { val: 320000000, label: "Typical mid-market: ~$320M" },
+        "healthcare_pharma":     { val: 180000000, label: "Typical mid-market: ~$180M" },
+        "it":                    { val: 150000000, label: "Typical mid-market: ~$150M" },
+        "professional_services": { val: 90000000,  label: "Typical mid-market: ~$90M" },
+        "manufacturing_hitech":  { val: 200000000, label: "Typical mid-market: ~$200M" },
+        "retail":                { val: 250000000, label: "Typical mid-market: ~$250M" },
+        "hospitality":           { val: 80000000,  label: "Typical mid-market: ~$80M" },
+        "education":             { val: 50000000,  label: "Typical mid-market: ~$50M" },
+        "automotive":            { val: 280000000, label: "Typical mid-market: ~$280M" },
+        "energy":                { val: 300000000, label: "Typical mid-market: ~$300M" },
+        "telecommunication":     { val: 350000000, label: "Typical mid-market: ~$350M" },
+        "nonprofit":             { val: 18000000,  label: "Typical mid-size NGO: ~$18M" },
+        "public_sector":         { val: 70000000,  label: "Typical agency budget: ~$70M" },
+        "entertainment":         { val: 100000000, label: "Typical mid-market: ~$100M" },
+        "oil_gas":               { val: 400000000, label: "Typical mid-market: ~$400M" },
+        "transport_logistics":   { val: 150000000, label: "Typical mid-market: ~$150M" },
+        "other":                 { val: 180000000, label: "APAC cross-industry average: ~$180M" }
+      },
+      latam: {
+        "banking_finance":       { val: 180000000, label: "Typical mid-market: ~$180M" },
+        "healthcare_pharma":     { val: 100000000, label: "Typical mid-market: ~$100M" },
+        "it":                    { val: 70000000,  label: "Typical mid-market: ~$70M" },
+        "professional_services": { val: 50000000,  label: "Typical mid-market: ~$50M" },
+        "manufacturing_hitech":  { val: 120000000, label: "Typical mid-market: ~$120M" },
+        "retail":                { val: 150000000, label: "Typical mid-market: ~$150M" },
+        "hospitality":           { val: 45000000,  label: "Typical mid-market: ~$45M" },
+        "education":             { val: 30000000,  label: "Typical mid-market: ~$30M" },
+        "automotive":            { val: 160000000, label: "Typical mid-market: ~$160M" },
+        "energy":                { val: 200000000, label: "Typical mid-market: ~$200M" },
+        "telecommunication":     { val: 220000000, label: "Typical mid-market: ~$220M" },
+        "nonprofit":             { val: 10000000,  label: "Typical mid-size NGO: ~$10M" },
+        "public_sector":         { val: 40000000,  label: "Typical agency budget: ~$40M" },
+        "entertainment":         { val: 55000000,  label: "Typical mid-market: ~$55M" },
+        "oil_gas":               { val: 280000000, label: "Typical mid-market: ~$280M" },
+        "transport_logistics":   { val: 80000000,  label: "Typical mid-market: ~$80M" },
+        "other":                 { val: 105000000, label: "LATAM cross-industry average: ~$105M" }
+      }
     };
 
-    // Average executive/leadership salary benchmarks (USD)
-    var INDUSTRY_SALARY = {
-      "banking_finance":       { val: 180000, label: "Industry avg executive: ~$180k" },
-      "healthcare_pharma":     { val: 160000, label: "Industry avg executive: ~$160k" },
-      "it":                    { val: 175000, label: "Industry avg executive: ~$175k" },
-      "professional_services": { val: 165000, label: "Industry avg executive: ~$165k" },
-      "manufacturing_hitech":  { val: 145000, label: "Industry avg executive: ~$145k" },
-      "retail":                { val: 130000, label: "Industry avg executive: ~$130k" },
-      "hospitality":           { val: 110000, label: "Industry avg executive: ~$110k" },
-      "education":             { val: 95000,  label: "Industry avg executive: ~$95k" },
-      "automotive":            { val: 140000, label: "Industry avg executive: ~$140k" },
-      "energy":                { val: 155000, label: "Industry avg executive: ~$155k" },
-      "telecommunication":     { val: 150000, label: "Industry avg executive: ~$150k" },
-      "nonprofit":             { val: 100000, label: "Industry avg executive: ~$100k" },
-      "public_sector":         { val: 105000, label: "Industry avg executive: ~$105k" },
-      "entertainment":         { val: 140000, label: "Industry avg executive: ~$140k" },
-      "oil_gas":               { val: 170000, label: "Industry avg executive: ~$170k" },
-      "transport_logistics":   { val: 120000, label: "Industry avg executive: ~$120k" },
-      "other":                 { val: 140000, label: "Global cross-industry average: ~$140k" }
+    // ── Average Executive / Leadership Salary ────────────────────────────────
+    var REGIONAL_SALARY = {
+      emea: {
+        "banking_finance":       { val: 180000, label: "Industry avg executive: ~$180k" },
+        "healthcare_pharma":     { val: 160000, label: "Industry avg executive: ~$160k" },
+        "it":                    { val: 175000, label: "Industry avg executive: ~$175k" },
+        "professional_services": { val: 165000, label: "Industry avg executive: ~$165k" },
+        "manufacturing_hitech":  { val: 145000, label: "Industry avg executive: ~$145k" },
+        "retail":                { val: 130000, label: "Industry avg executive: ~$130k" },
+        "hospitality":           { val: 110000, label: "Industry avg executive: ~$110k" },
+        "education":             { val: 95000,  label: "Industry avg executive: ~$95k" },
+        "automotive":            { val: 140000, label: "Industry avg executive: ~$140k" },
+        "energy":                { val: 155000, label: "Industry avg executive: ~$155k" },
+        "telecommunication":     { val: 150000, label: "Industry avg executive: ~$150k" },
+        "nonprofit":             { val: 100000, label: "Industry avg executive: ~$100k" },
+        "public_sector":         { val: 105000, label: "Industry avg executive: ~$105k" },
+        "entertainment":         { val: 140000, label: "Industry avg executive: ~$140k" },
+        "oil_gas":               { val: 170000, label: "Industry avg executive: ~$170k" },
+        "transport_logistics":   { val: 120000, label: "Industry avg executive: ~$120k" },
+        "other":                 { val: 140000, label: "EMEA cross-industry average: ~$140k" }
+      },
+      na: {
+        "banking_finance":       { val: 220000, label: "Industry avg executive: ~$220k" },
+        "healthcare_pharma":     { val: 200000, label: "Industry avg executive: ~$200k" },
+        "it":                    { val: 215000, label: "Industry avg executive: ~$215k" },
+        "professional_services": { val: 205000, label: "Industry avg executive: ~$205k" },
+        "manufacturing_hitech":  { val: 175000, label: "Industry avg executive: ~$175k" },
+        "retail":                { val: 155000, label: "Industry avg executive: ~$155k" },
+        "hospitality":           { val: 130000, label: "Industry avg executive: ~$130k" },
+        "education":             { val: 115000, label: "Industry avg executive: ~$115k" },
+        "automotive":            { val: 170000, label: "Industry avg executive: ~$170k" },
+        "energy":                { val: 195000, label: "Industry avg executive: ~$195k" },
+        "telecommunication":     { val: 185000, label: "Industry avg executive: ~$185k" },
+        "nonprofit":             { val: 120000, label: "Industry avg executive: ~$120k" },
+        "public_sector":         { val: 125000, label: "Industry avg executive: ~$125k" },
+        "entertainment":         { val: 175000, label: "Industry avg executive: ~$175k" },
+        "oil_gas":               { val: 210000, label: "Industry avg executive: ~$210k" },
+        "transport_logistics":   { val: 145000, label: "Industry avg executive: ~$145k" },
+        "other":                 { val: 172000, label: "NA cross-industry average: ~$172k" }
+      },
+      apac: {
+        "banking_finance":       { val: 120000, label: "Industry avg executive: ~$120k" },
+        "healthcare_pharma":     { val: 105000, label: "Industry avg executive: ~$105k" },
+        "it":                    { val: 115000, label: "Industry avg executive: ~$115k" },
+        "professional_services": { val: 108000, label: "Industry avg executive: ~$108k" },
+        "manufacturing_hitech":  { val: 90000,  label: "Industry avg executive: ~$90k" },
+        "retail":                { val: 80000,  label: "Industry avg executive: ~$80k" },
+        "hospitality":           { val: 70000,  label: "Industry avg executive: ~$70k" },
+        "education":             { val: 60000,  label: "Industry avg executive: ~$60k" },
+        "automotive":            { val: 88000,  label: "Industry avg executive: ~$88k" },
+        "energy":                { val: 100000, label: "Industry avg executive: ~$100k" },
+        "telecommunication":     { val: 95000,  label: "Industry avg executive: ~$95k" },
+        "nonprofit":             { val: 58000,  label: "Industry avg executive: ~$58k" },
+        "public_sector":         { val: 62000,  label: "Industry avg executive: ~$62k" },
+        "entertainment":         { val: 85000,  label: "Industry avg executive: ~$85k" },
+        "oil_gas":               { val: 110000, label: "Industry avg executive: ~$110k" },
+        "transport_logistics":   { val: 72000,  label: "Industry avg executive: ~$72k" },
+        "other":                 { val: 89000,  label: "APAC cross-industry average: ~$89k" }
+      },
+      latam: {
+        "banking_finance":       { val: 75000,  label: "Industry avg executive: ~$75k" },
+        "healthcare_pharma":     { val: 65000,  label: "Industry avg executive: ~$65k" },
+        "it":                    { val: 70000,  label: "Industry avg executive: ~$70k" },
+        "professional_services": { val: 65000,  label: "Industry avg executive: ~$65k" },
+        "manufacturing_hitech":  { val: 55000,  label: "Industry avg executive: ~$55k" },
+        "retail":                { val: 48000,  label: "Industry avg executive: ~$48k" },
+        "hospitality":           { val: 42000,  label: "Industry avg executive: ~$42k" },
+        "education":             { val: 38000,  label: "Industry avg executive: ~$38k" },
+        "automotive":            { val: 54000,  label: "Industry avg executive: ~$54k" },
+        "energy":                { val: 68000,  label: "Industry avg executive: ~$68k" },
+        "telecommunication":     { val: 60000,  label: "Industry avg executive: ~$60k" },
+        "nonprofit":             { val: 35000,  label: "Industry avg executive: ~$35k" },
+        "public_sector":         { val: 38000,  label: "Industry avg executive: ~$38k" },
+        "entertainment":         { val: 50000,  label: "Industry avg executive: ~$50k" },
+        "oil_gas":               { val: 72000,  label: "Industry avg executive: ~$72k" },
+        "transport_logistics":   { val: 44000,  label: "Industry avg executive: ~$44k" },
+        "other":                 { val: 55000,  label: "LATAM cross-industry average: ~$55k" }
+      }
     };
 
-    // Cost per coachee benchmarks (USD, full executive coaching program)
-    var INDUSTRY_COST = {
-      "banking_finance":       { val: 4000, label: "High-touch sector typical: ~$4,000" },
-      "healthcare_pharma":     { val: 3500, label: "Industry typical: ~$3,500" },
-      "it":                    { val: 3000, label: "Industry typical: ~$3,000" },
-      "professional_services": { val: 3500, label: "Industry typical: ~$3,500" },
-      "manufacturing_hitech":  { val: 2800, label: "Industry typical: ~$2,800" },
-      "retail":                { val: 2400, label: "Industry typical: ~$2,400" },
-      "hospitality":           { val: 2200, label: "Industry typical: ~$2,200" },
-      "education":             { val: 2000, label: "Industry typical: ~$2,000" },
-      "automotive":            { val: 2800, label: "Industry typical: ~$2,800" },
-      "energy":                { val: 3200, label: "Industry typical: ~$3,200" },
-      "telecommunication":     { val: 2800, label: "Industry typical: ~$2,800" },
-      "nonprofit":             { val: 1800, label: "NGO/nonprofit typical: ~$1,800" },
-      "public_sector":         { val: 2000, label: "Public sector typical: ~$2,000" },
-      "entertainment":         { val: 2600, label: "Industry typical: ~$2,600" },
-      "oil_gas":               { val: 3500, label: "Industry typical: ~$3,500" },
-      "transport_logistics":   { val: 2400, label: "Industry typical: ~$2,400" },
-      "other":                 { val: 2800, label: "Global cross-industry average: ~$2,800" }
+    // ── Cost Per Coachee (full executive coaching program) ────────────────────
+    var REGIONAL_COST = {
+      emea: {
+        "banking_finance":       { val: 4000, label: "High-touch sector typical: ~$4,000" },
+        "healthcare_pharma":     { val: 3500, label: "Industry typical: ~$3,500" },
+        "it":                    { val: 3000, label: "Industry typical: ~$3,000" },
+        "professional_services": { val: 3500, label: "Industry typical: ~$3,500" },
+        "manufacturing_hitech":  { val: 2800, label: "Industry typical: ~$2,800" },
+        "retail":                { val: 2400, label: "Industry typical: ~$2,400" },
+        "hospitality":           { val: 2200, label: "Industry typical: ~$2,200" },
+        "education":             { val: 2000, label: "Industry typical: ~$2,000" },
+        "automotive":            { val: 2800, label: "Industry typical: ~$2,800" },
+        "energy":                { val: 3200, label: "Industry typical: ~$3,200" },
+        "telecommunication":     { val: 2800, label: "Industry typical: ~$2,800" },
+        "nonprofit":             { val: 1800, label: "NGO/nonprofit typical: ~$1,800" },
+        "public_sector":         { val: 2000, label: "Public sector typical: ~$2,000" },
+        "entertainment":         { val: 2600, label: "Industry typical: ~$2,600" },
+        "oil_gas":               { val: 3500, label: "Industry typical: ~$3,500" },
+        "transport_logistics":   { val: 2400, label: "Industry typical: ~$2,400" },
+        "other":                 { val: 2800, label: "EMEA cross-industry average: ~$2,800" }
+      },
+      na: {
+        "banking_finance":       { val: 5500, label: "High-touch sector typical: ~$5,500" },
+        "healthcare_pharma":     { val: 4800, label: "Industry typical: ~$4,800" },
+        "it":                    { val: 4200, label: "Industry typical: ~$4,200" },
+        "professional_services": { val: 4800, label: "Industry typical: ~$4,800" },
+        "manufacturing_hitech":  { val: 3800, label: "Industry typical: ~$3,800" },
+        "retail":                { val: 3200, label: "Industry typical: ~$3,200" },
+        "hospitality":           { val: 3000, label: "Industry typical: ~$3,000" },
+        "education":             { val: 2800, label: "Industry typical: ~$2,800" },
+        "automotive":            { val: 3800, label: "Industry typical: ~$3,800" },
+        "energy":                { val: 4400, label: "Industry typical: ~$4,400" },
+        "telecommunication":     { val: 3800, label: "Industry typical: ~$3,800" },
+        "nonprofit":             { val: 2400, label: "NGO/nonprofit typical: ~$2,400" },
+        "public_sector":         { val: 2800, label: "Public sector typical: ~$2,800" },
+        "entertainment":         { val: 3500, label: "Industry typical: ~$3,500" },
+        "oil_gas":               { val: 4800, label: "Industry typical: ~$4,800" },
+        "transport_logistics":   { val: 3200, label: "Industry typical: ~$3,200" },
+        "other":                 { val: 3800, label: "NA cross-industry average: ~$3,800" }
+      },
+      apac: {
+        "banking_finance":       { val: 2800, label: "Industry typical: ~$2,800" },
+        "healthcare_pharma":     { val: 2400, label: "Industry typical: ~$2,400" },
+        "it":                    { val: 2200, label: "Industry typical: ~$2,200" },
+        "professional_services": { val: 2400, label: "Industry typical: ~$2,400" },
+        "manufacturing_hitech":  { val: 1900, label: "Industry typical: ~$1,900" },
+        "retail":                { val: 1600, label: "Industry typical: ~$1,600" },
+        "hospitality":           { val: 1500, label: "Industry typical: ~$1,500" },
+        "education":             { val: 1400, label: "Industry typical: ~$1,400" },
+        "automotive":            { val: 1900, label: "Industry typical: ~$1,900" },
+        "energy":                { val: 2200, label: "Industry typical: ~$2,200" },
+        "telecommunication":     { val: 1900, label: "Industry typical: ~$1,900" },
+        "nonprofit":             { val: 1200, label: "NGO/nonprofit typical: ~$1,200" },
+        "public_sector":         { val: 1400, label: "Public sector typical: ~$1,400" },
+        "entertainment":         { val: 1700, label: "Industry typical: ~$1,700" },
+        "oil_gas":               { val: 2400, label: "Industry typical: ~$2,400" },
+        "transport_logistics":   { val: 1600, label: "Industry typical: ~$1,600" },
+        "other":                 { val: 1900, label: "APAC cross-industry average: ~$1,900" }
+      },
+      latam: {
+        "banking_finance":       { val: 1800, label: "Industry typical: ~$1,800" },
+        "healthcare_pharma":     { val: 1500, label: "Industry typical: ~$1,500" },
+        "it":                    { val: 1400, label: "Industry typical: ~$1,400" },
+        "professional_services": { val: 1500, label: "Industry typical: ~$1,500" },
+        "manufacturing_hitech":  { val: 1200, label: "Industry typical: ~$1,200" },
+        "retail":                { val: 1000, label: "Industry typical: ~$1,000" },
+        "hospitality":           { val: 900,  label: "Industry typical: ~$900" },
+        "education":             { val: 850,  label: "Industry typical: ~$850" },
+        "automotive":            { val: 1200, label: "Industry typical: ~$1,200" },
+        "energy":                { val: 1400, label: "Industry typical: ~$1,400" },
+        "telecommunication":     { val: 1200, label: "Industry typical: ~$1,200" },
+        "nonprofit":             { val: 750,  label: "NGO/nonprofit typical: ~$750" },
+        "public_sector":         { val: 850,  label: "Public sector typical: ~$850" },
+        "entertainment":         { val: 1100, label: "Industry typical: ~$1,100" },
+        "oil_gas":               { val: 1500, label: "Industry typical: ~$1,500" },
+        "transport_logistics":   { val: 1000, label: "Industry typical: ~$1,000" },
+        "other":                 { val: 1200, label: "LATAM cross-industry average: ~$1,200" }
+      }
     };
 
-    // Turnover baseline benchmarks (leadership-level annual turnover %)
-    var INDUSTRY_TURNOVER_BASELINE = {
-      "banking_finance":       { val: 23,  label: "Industry avg leadership turnover: ~23%" },
-      "healthcare_pharma":     { val: 21,  label: "Industry avg leadership turnover: ~21%" },
-      "it":                    { val: 13,  label: "Industry avg leadership turnover: ~13%" },
-      "professional_services": { val: 21,  label: "Industry avg leadership turnover: ~21%" },
-      "manufacturing_hitech":  { val: 16,  label: "Industry avg leadership turnover: ~16%" },
-      "retail":                { val: 20,  label: "Industry avg leadership turnover: ~20%" },
-      "hospitality":           { val: 30,  label: "Industry avg leadership turnover: ~30%" },
-      "education":             { val: 11,  label: "Industry avg leadership turnover: ~11%" },
-      "automotive":            { val: 19,  label: "Industry avg leadership turnover: ~19%" },
-      "energy":                { val: 14,  label: "Industry avg leadership turnover: ~14%" },
-      "telecommunication":     { val: 15,  label: "Industry avg leadership turnover: ~15%" },
-      "nonprofit":             { val: 16,  label: "Industry avg leadership turnover: ~16%" },
-      "public_sector":         { val: 11,  label: "Industry avg leadership turnover: ~11%" },
-      "entertainment":         { val: 17,  label: "Industry avg leadership turnover: ~17%" },
-      "oil_gas":               { val: 14,  label: "Industry avg leadership turnover: ~14%" },
-      "transport_logistics":   { val: 14,  label: "Industry avg leadership turnover: ~14%" },
-      "other":                 { val: 17,  label: "Global cross-industry average: ~17%" }
+    // ── Turnover Baseline (leadership-level annual turnover %) ────────────────
+    var REGIONAL_TURNOVER_BASELINE = {
+      emea: {
+        "banking_finance":       { val: 23,  label: "Industry avg leadership turnover: ~23%" },
+        "healthcare_pharma":     { val: 21,  label: "Industry avg leadership turnover: ~21%" },
+        "it":                    { val: 13,  label: "Industry avg leadership turnover: ~13%" },
+        "professional_services": { val: 21,  label: "Industry avg leadership turnover: ~21%" },
+        "manufacturing_hitech":  { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+        "retail":                { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "hospitality":           { val: 30,  label: "Industry avg leadership turnover: ~30%" },
+        "education":             { val: 11,  label: "Industry avg leadership turnover: ~11%" },
+        "automotive":            { val: 19,  label: "Industry avg leadership turnover: ~19%" },
+        "energy":                { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+        "telecommunication":     { val: 15,  label: "Industry avg leadership turnover: ~15%" },
+        "nonprofit":             { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+        "public_sector":         { val: 11,  label: "Industry avg leadership turnover: ~11%" },
+        "entertainment":         { val: 17,  label: "Industry avg leadership turnover: ~17%" },
+        "oil_gas":               { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+        "transport_logistics":   { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+        "other":                 { val: 17,  label: "EMEA cross-industry average: ~17%" }
+      },
+      na: {
+        "banking_finance":       { val: 26,  label: "Industry avg leadership turnover: ~26%" },
+        "healthcare_pharma":     { val: 24,  label: "Industry avg leadership turnover: ~24%" },
+        "it":                    { val: 18,  label: "Industry avg leadership turnover: ~18%" },
+        "professional_services": { val: 23,  label: "Industry avg leadership turnover: ~23%" },
+        "manufacturing_hitech":  { val: 18,  label: "Industry avg leadership turnover: ~18%" },
+        "retail":                { val: 24,  label: "Industry avg leadership turnover: ~24%" },
+        "hospitality":           { val: 35,  label: "Industry avg leadership turnover: ~35%" },
+        "education":             { val: 13,  label: "Industry avg leadership turnover: ~13%" },
+        "automotive":            { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "energy":                { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+        "telecommunication":     { val: 18,  label: "Industry avg leadership turnover: ~18%" },
+        "nonprofit":             { val: 19,  label: "Industry avg leadership turnover: ~19%" },
+        "public_sector":         { val: 12,  label: "Industry avg leadership turnover: ~12%" },
+        "entertainment":         { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "oil_gas":               { val: 15,  label: "Industry avg leadership turnover: ~15%" },
+        "transport_logistics":   { val: 17,  label: "Industry avg leadership turnover: ~17%" },
+        "other":                 { val: 20,  label: "NA cross-industry average: ~20%" }
+      },
+      apac: {
+        "banking_finance":       { val: 28,  label: "Industry avg leadership turnover: ~28%" },
+        "healthcare_pharma":     { val: 24,  label: "Industry avg leadership turnover: ~24%" },
+        "it":                    { val: 22,  label: "Industry avg leadership turnover: ~22%" },
+        "professional_services": { val: 25,  label: "Industry avg leadership turnover: ~25%" },
+        "manufacturing_hitech":  { val: 19,  label: "Industry avg leadership turnover: ~19%" },
+        "retail":                { val: 26,  label: "Industry avg leadership turnover: ~26%" },
+        "hospitality":           { val: 34,  label: "Industry avg leadership turnover: ~34%" },
+        "education":             { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+        "automotive":            { val: 21,  label: "Industry avg leadership turnover: ~21%" },
+        "energy":                { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+        "telecommunication":     { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "nonprofit":             { val: 18,  label: "Industry avg leadership turnover: ~18%" },
+        "public_sector":         { val: 10,  label: "Industry avg leadership turnover: ~10%" },
+        "entertainment":         { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "oil_gas":               { val: 15,  label: "Industry avg leadership turnover: ~15%" },
+        "transport_logistics":   { val: 18,  label: "Industry avg leadership turnover: ~18%" },
+        "other":                 { val: 21,  label: "APAC cross-industry average: ~21%" }
+      },
+      latam: {
+        "banking_finance":       { val: 30,  label: "Industry avg leadership turnover: ~30%" },
+        "healthcare_pharma":     { val: 26,  label: "Industry avg leadership turnover: ~26%" },
+        "it":                    { val: 25,  label: "Industry avg leadership turnover: ~25%" },
+        "professional_services": { val: 27,  label: "Industry avg leadership turnover: ~27%" },
+        "manufacturing_hitech":  { val: 21,  label: "Industry avg leadership turnover: ~21%" },
+        "retail":                { val: 28,  label: "Industry avg leadership turnover: ~28%" },
+        "hospitality":           { val: 38,  label: "Industry avg leadership turnover: ~38%" },
+        "education":             { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+        "automotive":            { val: 23,  label: "Industry avg leadership turnover: ~23%" },
+        "energy":                { val: 18,  label: "Industry avg leadership turnover: ~18%" },
+        "telecommunication":     { val: 22,  label: "Industry avg leadership turnover: ~22%" },
+        "nonprofit":             { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "public_sector":         { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+        "entertainment":         { val: 22,  label: "Industry avg leadership turnover: ~22%" },
+        "oil_gas":               { val: 17,  label: "Industry avg leadership turnover: ~17%" },
+        "transport_logistics":   { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+        "other":                 { val: 23,  label: "LATAM cross-industry average: ~23%" }
+      }
     };
+
+    // ── Turnover Reduction from Coaching (%) ─────────────────────────────────
+    var REGIONAL_TURNOVER_REDUCTION = {
+      emea: {
+        "banking_finance": 20, "healthcare_pharma": 22, "it": 16,
+        "professional_services": 19, "manufacturing_hitech": 15, "retail": 25,
+        "hospitality": 25, "education": 12, "automotive": 14, "energy": 14,
+        "telecommunication": 15, "nonprofit": 16, "public_sector": 10,
+        "entertainment": 17, "oil_gas": 14, "transport_logistics": 14, "other": 17
+      },
+      na: {
+        "banking_finance": 22, "healthcare_pharma": 24, "it": 18,
+        "professional_services": 21, "manufacturing_hitech": 17, "retail": 27,
+        "hospitality": 28, "education": 14, "automotive": 16, "energy": 15,
+        "telecommunication": 17, "nonprofit": 18, "public_sector": 12,
+        "entertainment": 19, "oil_gas": 15, "transport_logistics": 16, "other": 19
+      },
+      apac: {
+        "banking_finance": 19, "healthcare_pharma": 21, "it": 17,
+        "professional_services": 18, "manufacturing_hitech": 14, "retail": 23,
+        "hospitality": 24, "education": 11, "automotive": 13, "energy": 13,
+        "telecommunication": 15, "nonprofit": 15, "public_sector": 9,
+        "entertainment": 16, "oil_gas": 13, "transport_logistics": 13, "other": 16
+      },
+      latam: {
+        "banking_finance": 21, "healthcare_pharma": 22, "it": 17,
+        "professional_services": 20, "manufacturing_hitech": 15, "retail": 26,
+        "hospitality": 27, "education": 13, "automotive": 15, "energy": 14,
+        "telecommunication": 16, "nonprofit": 17, "public_sector": 11,
+        "entertainment": 18, "oil_gas": 14, "transport_logistics": 15, "other": 18
+      }
+    };
+
+    // ── Helper: resolve current region key ───────────────────────────────────
+    function getRegion() {
+      var r = qs("#region").value;
+      return (r === "na" || r === "apac" || r === "latam") ? r : "emea";
+    }
+
+    function getBenchmarks(region, industry) {
+      var rev      = (REGIONAL_REVENUE[region]           && REGIONAL_REVENUE[region][industry])           ? REGIONAL_REVENUE[region][industry]           : null;
+      var sal      = (REGIONAL_SALARY[region]            && REGIONAL_SALARY[region][industry])            ? REGIONAL_SALARY[region][industry]            : null;
+      var cost     = (REGIONAL_COST[region]              && REGIONAL_COST[region][industry])              ? REGIONAL_COST[region][industry]              : null;
+      var turnBase = (REGIONAL_TURNOVER_BASELINE[region] && REGIONAL_TURNOVER_BASELINE[region][industry]) ? REGIONAL_TURNOVER_BASELINE[region][industry] : null;
+      var turnRed  = (REGIONAL_TURNOVER_REDUCTION[region] && REGIONAL_TURNOVER_REDUCTION[region][industry] !== undefined) ? REGIONAL_TURNOVER_REDUCTION[region][industry] : 17;
+      return { rev: rev, sal: sal, cost: cost, turnBase: turnBase, turnRed: turnRed };
+    }
 
     function updateFieldBenchmarks(industry) {
-      var revenueHint   = qs("#revenueHint");
-      var salaryHint    = qs("#salaryHint");
-      var costHint      = qs("#costHint");
-      var turnoverHint  = qs("#turnoverHint");
+      var region = getRegion();
+      var bm = getBenchmarks(region, industry);
 
-      if (industry && industry in INDUSTRY_REVENUE) {
-        qs("#revenueHintText").textContent  = "Auto-applied if blank: " + INDUSTRY_REVENUE[industry].label;
-        qs("#salaryHintText").textContent   = "Auto-applied if blank: " + INDUSTRY_SALARY[industry].label;
-        qs("#costHintText").textContent     = "Auto-applied if blank: " + INDUSTRY_COST[industry].label;
-        qs("#turnoverHintText").textContent = "Auto-applied if blank: " + INDUSTRY_TURNOVER_BASELINE[industry].label;
+      var revenueHint  = qs("#revenueHint");
+      var salaryHint   = qs("#salaryHint");
+      var costHint     = qs("#costHint");
+      var turnoverHint = qs("#turnoverHint");
+
+      if (industry && bm.rev) {
+        qs("#revenueHintText").textContent  = "Auto-applied if blank: " + bm.rev.label;
+        qs("#salaryHintText").textContent   = "Auto-applied if blank: " + bm.sal.label;
+        qs("#costHintText").textContent     = "Auto-applied if blank: " + bm.cost.label;
+        qs("#turnoverHintText").textContent = "Auto-applied if blank: " + bm.turnBase.label;
         revenueHint.classList.add("visible");
         salaryHint.classList.add("visible");
         costHint.classList.add("visible");
@@ -1235,28 +1524,12 @@
       }
     }
 
-    // Wire up "Use benchmark" buttons — removed (benchmarks now apply automatically)
-    // Based on 2024-2025 industry research on executive coaching impact
-    // These are the % of current turnover reduction from coaching
-    var INDUSTRY_TURNOVER_REDUCTION = {
-      "banking_finance": 20,           // Conservative, high-value roles; 23% baseline turnover
-      "healthcare_pharma": 22,         // Leadership-driven retention critical; 20.7% baseline
-      "it": 16,                        // Competitive market, highly mobile; 13.2% baseline
-      "professional_services": 19,     // High-pressure, coaching valued; 20.7% baseline
-      "manufacturing_hitech": 15,      // Skilled workforce; moderate turnover
-      "retail": 25,                    // High baseline turnover; proven coaching impact
-      "hospitality": 25,               // Proven case study (75.2% baseline → 56% with coaching)
-      "education": 12,                 // Already stable sector; marginal gains
-      "automotive": 14,                // Moderate impact; 18.9% baseline
-      "energy": 14,                    // Skilled workforce; moderate impact
-      "telecommunication": 15,         // Moderate impact
-      "nonprofit": 16,                 // Increasing focus on retention
-      "public_sector": 10,             // Already stable (11.4% baseline); marginal gains
-      "entertainment": 17,             // Moderate competitive pressure
-      "oil_gas": 14,                   // Skilled workforce; moderate impact
-      "transport_logistics": 14,        // Moderate impact
-      "other": 17                       // Cross-industry global average
-    };
+    // Keep legacy flat references so PDF generation code still works unchanged
+    var INDUSTRY_REVENUE           = { get: function(i) { return REGIONAL_REVENUE[getRegion()][i];           } };
+    var INDUSTRY_SALARY            = { get: function(i) { return REGIONAL_SALARY[getRegion()][i];            } };
+    var INDUSTRY_COST              = { get: function(i) { return REGIONAL_COST[getRegion()][i];              } };
+    var INDUSTRY_TURNOVER_BASELINE = { get: function(i) { return REGIONAL_TURNOVER_BASELINE[getRegion()][i]; } };
+    var INDUSTRY_TURNOVER_REDUCTION = REGIONAL_TURNOVER_REDUCTION.emea; // overridden in calculateROI
 
     // Step management
     var currentStep = 1;
@@ -1339,21 +1612,23 @@
       clearError();
 
       var industry = qs("#industry").value;
+      var region   = getRegion();
+      var bm       = getBenchmarks(region, industry);
 
       // Read raw field values
-      var annualRevenueRaw  = qs("#annualRevenue").value.trim();
-      var avgSalaryRaw      = qs("#avgSalary").value.trim();
+      var annualRevenueRaw   = qs("#annualRevenue").value.trim();
+      var avgSalaryRaw       = qs("#avgSalary").value.trim();
       var currentTurnoverRaw = qs("#currentTurnover").value.trim();
       var costPerCoacheeRaw  = qs("#costPerCoachee").value.trim();
 
       var numEmployees = Number(qs("#numEmployees").value) || 0;
       var numCoachees  = Number(qs("#numCoachees").value) || 0;
 
-      // Auto-apply industry benchmarks for any blank field
-      var annualRevenue  = annualRevenueRaw !== ""   ? Number(annualRevenueRaw)   : (industry && INDUSTRY_REVENUE[industry]          ? INDUSTRY_REVENUE[industry].val          : 0);
-      var avgSalary      = avgSalaryRaw !== ""       ? Number(avgSalaryRaw)       : (industry && INDUSTRY_SALARY[industry]           ? INDUSTRY_SALARY[industry].val           : 0);
-      var currentTurnover = currentTurnoverRaw !== "" ? Number(currentTurnoverRaw) : (industry && INDUSTRY_TURNOVER_BASELINE[industry] ? INDUSTRY_TURNOVER_BASELINE[industry].val : 13);
-      var costPerCoachee = costPerCoacheeRaw !== ""  ? Number(costPerCoacheeRaw)  : (industry && INDUSTRY_COST[industry]             ? INDUSTRY_COST[industry].val             : 2400);
+      // Auto-apply regional+industry benchmarks for any blank field
+      var annualRevenue   = annualRevenueRaw !== ""   ? Number(annualRevenueRaw)   : (bm.rev      ? bm.rev.val      : 0);
+      var avgSalary       = avgSalaryRaw !== ""       ? Number(avgSalaryRaw)       : (bm.sal      ? bm.sal.val      : 0);
+      var currentTurnover = currentTurnoverRaw !== "" ? Number(currentTurnoverRaw) : (bm.turnBase ? bm.turnBase.val : 13);
+      var costPerCoachee  = costPerCoacheeRaw !== ""  ? Number(costPerCoacheeRaw)  : (bm.cost     ? bm.cost.val     : 2400);
 
       // Validation — only hard-require industry, employees, coachees
       var messages = [];
@@ -1368,11 +1643,8 @@
         return;
       }
 
-      // ===== CALCULATIONS (Industry Benchmark-Based) =====
-      // Turnover reduction is based on industry research and coaching effectiveness studies
-      var turnoverReduction = (industry in INDUSTRY_TURNOVER_REDUCTION) 
-        ? INDUSTRY_TURNOVER_REDUCTION[industry] 
-        : 17;  // Global average fallback
+      // ===== CALCULATIONS (Regional + Industry Benchmark-Based) =====
+      var turnoverReduction = bm.turnRed;
 
       // 1. Direct impact: Coachees retained
       var postTurnover = currentTurnover * (1 - turnoverReduction / 100);
@@ -1478,25 +1750,37 @@
       });
     }
 
+    function refreshBenchmarkCard() {
+      var benchmarkCard  = qs("#benchmarkCard");
+      var benchmarkValue = qs("#benchmarkValue");
+      var region   = getRegion();
+      var industry = selectedIndustry;
+      if (industry && REGIONAL_TURNOVER_REDUCTION[region] && REGIONAL_TURNOVER_REDUCTION[region][industry] !== undefined) {
+        selectedTurnoverReduction = REGIONAL_TURNOVER_REDUCTION[region][industry];
+        benchmarkValue.textContent = selectedTurnoverReduction + "% turnover reduction (regional benchmark)";
+        benchmarkCard.style.display = "flex";
+      } else {
+        benchmarkCard.style.display = "none";
+        selectedTurnoverReduction = 0;
+      }
+    }
+
     // Industry selector - shows benchmark
     var industrySelect = qs("#industry");
     if (industrySelect) {
       industrySelect.addEventListener("change", function(e) {
-        var selected = e.target.value;
-        selectedIndustry = selected;
-        var benchmarkCard = qs("#benchmarkCard");
-        var benchmarkValue = qs("#benchmarkValue");
-        
-        if (selected && selected in INDUSTRY_TURNOVER_REDUCTION) {
-          selectedTurnoverReduction = INDUSTRY_TURNOVER_REDUCTION[selected];
-          benchmarkValue.textContent = selectedTurnoverReduction + "% turnover reduction (industry benchmark)";
-          benchmarkCard.style.display = "flex";
-        } else {
-          benchmarkCard.style.display = "none";
-          selectedTurnoverReduction = 0;
-        }
+        selectedIndustry = e.target.value;
+        refreshBenchmarkCard();
+        updateFieldBenchmarks(selectedIndustry);
+      });
+    }
 
-        updateFieldBenchmarks(selected);
+    // Region selector - re-derive benchmarks whenever region changes
+    var regionSelectEl = qs("#region");
+    if (regionSelectEl) {
+      regionSelectEl.addEventListener("change", function() {
+        refreshBenchmarkCard();
+        updateFieldBenchmarks(selectedIndustry);
       });
     }
 
@@ -1622,18 +1906,20 @@
 
       var industry = qs('#industry').value;
       var currSym  = selectedCurrency === 'EUR' ? 'EUR ' : '$';
+      var pdfRegion = getRegion();
+      var pdfBm    = getBenchmarks(pdfRegion, industry);
 
-      var avgSalaryVal   = avgSalaryRaw !== ''     ? avgSalaryRaw     : (INDUSTRY_SALARY[industry]           ? INDUSTRY_SALARY[industry].val + ' (benchmark)'           : '—');
-      var costVal        = costRaw !== ''           ? costRaw          : (INDUSTRY_COST[industry]             ? INDUSTRY_COST[industry].val + ' (benchmark)'             : '—');
-      var turnoverVal    = turnoverRaw !== ''       ? turnoverRaw + '%' : (INDUSTRY_TURNOVER_BASELINE[industry] ? INDUSTRY_TURNOVER_BASELINE[industry].val + '% (benchmark)' : '—');
-      var revenueVal     = annualRevenueRaw !== ''  ? annualRevenueRaw  : (INDUSTRY_REVENUE[industry]          ? INDUSTRY_REVENUE[industry].label                          : '—');
-      var reductionVal   = (INDUSTRY_TURNOVER_REDUCTION[industry] || 17) + '% (industry benchmark)';
+      var avgSalaryVal = avgSalaryRaw !== '' ? avgSalaryRaw : (pdfBm.sal  ? pdfBm.sal.val  + ' (benchmark)' : '—');
+      var costVal      = costRaw !== ''      ? costRaw      : (pdfBm.cost ? pdfBm.cost.val + ' (benchmark)' : '—');
+      var turnoverVal  = turnoverRaw !== ''  ? turnoverRaw + '%' : (pdfBm.turnBase ? pdfBm.turnBase.val + '% (benchmark)' : '—');
+      var revenueVal   = annualRevenueRaw !== '' ? annualRevenueRaw : (pdfBm.rev ? pdfBm.rev.label : '—');
+      var reductionVal = pdfBm.turnRed + '% (regional benchmark)';
 
       // Format salary and cost with currency symbol if they are plain numbers
       if (!isNaN(avgSalaryRaw) && avgSalaryRaw !== '') avgSalaryVal = currSym + Number(avgSalaryRaw).toLocaleString('en-US');
-      else if (INDUSTRY_SALARY[industry] && avgSalaryRaw === '') avgSalaryVal = currSym + INDUSTRY_SALARY[industry].val.toLocaleString('en-US') + ' (benchmark)';
+      else if (pdfBm.sal && avgSalaryRaw === '') avgSalaryVal = currSym + pdfBm.sal.val.toLocaleString('en-US') + ' (benchmark)';
       if (!isNaN(costRaw) && costRaw !== '') costVal = currSym + Number(costRaw).toLocaleString('en-US');
-      else if (INDUSTRY_COST[industry] && costRaw === '') costVal = currSym + INDUSTRY_COST[industry].val.toLocaleString('en-US') + ' (benchmark)';
+      else if (pdfBm.cost && costRaw === '') costVal = currSym + pdfBm.cost.val.toLocaleString('en-US') + ' (benchmark)';
 
       // PDF setup
       var PDFDocument   = PDFLib.PDFDocument;
@@ -1887,26 +2173,28 @@
 
       // Collect live values for the explanations
       var p2Industry  = qs('#industry').value;
-      var p2TurnRed   = (INDUSTRY_TURNOVER_REDUCTION[p2Industry] || 17);
+      var p2Region    = getRegion();
+      var p2Bm        = getBenchmarks(p2Region, p2Industry);
+      var p2TurnRed   = p2Bm.turnRed;
       var p2CurrSym   = selectedCurrency === 'EUR' ? 'EUR ' : '$';
 
       var p2AvgSalary = qs('#avgSalary').value.trim() !== ''
         ? p2CurrSym + Number(qs('#avgSalary').value).toLocaleString('en-US')
-        : (INDUSTRY_SALARY[p2Industry] ? p2CurrSym + INDUSTRY_SALARY[p2Industry].val.toLocaleString('en-US') + ' (benchmark)' : '—');
+        : (p2Bm.sal ? p2CurrSym + p2Bm.sal.val.toLocaleString('en-US') + ' (benchmark)' : '—');
 
       var p2Turnover = qs('#currentTurnover').value.trim() !== ''
         ? qs('#currentTurnover').value + '%'
-        : (INDUSTRY_TURNOVER_BASELINE[p2Industry] ? INDUSTRY_TURNOVER_BASELINE[p2Industry].val + '% (benchmark)' : '—');
+        : (p2Bm.turnBase ? p2Bm.turnBase.val + '% (benchmark)' : '—');
 
       var p2CostPerCoachee = qs('#costPerCoachee').value.trim() !== ''
         ? p2CurrSym + Number(qs('#costPerCoachee').value).toLocaleString('en-US')
-        : (INDUSTRY_COST[p2Industry] ? p2CurrSym + INDUSTRY_COST[p2Industry].val.toLocaleString('en-US') + ' (benchmark)' : '—');
+        : (p2Bm.cost ? p2CurrSym + p2Bm.cost.val.toLocaleString('en-US') + ' (benchmark)' : '—');
 
       var p2NumCoachees  = qs('#numCoachees').value  || '—';
       var p2NumEmployees = qs('#numEmployees').value || '—';
       var p2Revenue      = qs('#annualRevenue').value.trim() !== ''
         ? p2CurrSym + Number(qs('#annualRevenue').value).toLocaleString('en-US')
-        : (INDUSTRY_REVENUE[p2Industry] ? INDUSTRY_REVENUE[p2Industry].label : '—');
+        : (p2Bm.rev ? p2Bm.rev.label : '—');
 
       var p2PostTurnover = (Number(p2Turnover) * (1 - p2TurnRed / 100)).toFixed(1);
       var p2IndustryName = getSelectText('industry');
