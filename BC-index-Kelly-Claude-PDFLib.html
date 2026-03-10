@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Executive Coaching ROI Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  <style>
+    :root {
+      --bg: #05070b;
+      --bg-card: #10131c;
+      --bg-card-soft: #171b26;
+      --border-subtle: #252b3a;
+      --accent: #038bc7;
+      --accent-soft: rgba(3, 139, 199, 0.2);
+      --accent-strong: rgba(3, 139, 199, 0.4);
+      --text-main: #f7f9ff;
+      --text-muted: #a4acc4;
+      --text-soft: #6c7390;
+      --error: #ff5c7a;
+      --success: #22c55e;
+      --radius-lg: 18px;
+      --radius-xl: 22px;
+      --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.7);
+      --shadow-light: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #05070b;
+      background: radial-gradient(circle at top left, #111526 0%, #05070b 45%, #03040a 100%);
+      color: #f7f9ff;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+      align-items: stretch;
+      -webkit-box-pack: center;
+      -ms-flex-pack: center;
+      justify-content: center;
+      padding: 52px 16px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      background: linear-gradient(145deg, rgba(8, 11, 20, 0.95), rgba(3, 7, 17, 0.98));
+      border-radius: 32px;
+      padding: 34px 30px 32px 30px;
+      -webkit-box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.02);
+      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    @media (max-width: 900px) {
+      .app-shell {
+        padding: 26px 18px 24px;
+      }
+    }
+
+    .app-header {
+      text-align: center;
+      margin-bottom: 4px;
+    }
+
+    .app-header h1 {
+      font-size: 2.15rem;
+      margin: 0 0 12px;
+      font-weight: 700;
+    }
+
+    .app-header p {
+      margin: 0;
+      font-size: 1rem;
+      color: #c4cce6;
+      max-width: 580px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    .layout {
+      display: -ms-grid;
+      display: grid;
+      -ms-grid-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.1fr);
+      gap: 28px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        -ms-grid-columns: minmax(0, 1fr);
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .left-panel {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-container {
+      background: radial-gradient(circle at top left, rgba(3, 139, 199, 0.28), rgba(3, 10, 24, 0.9));
+      border-radius: 22px;
+      padding: 20px 18px 18px;
+      border: 1px solid rgba(3, 139, 199, 0.55);
+      -webkit-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-container::before {
+      content: "";
+      position: absolute;
+      top: -60%;
+      right: -60%;
+      bottom: -60%;
+      left: -60%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(3, 139, 199, 0.2), transparent 60%),
+        radial-gradient(circle at 90% 10%, rgba(3, 139, 199, 0.14), transparent 55%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .form-inner {
+      position: relative;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .step-panels {
+      border-radius: 16px;
+      background: rgba(5, 8, 16, 0.92);
+      border: 1px solid rgba(3, 139, 199, 0.5);
+      padding: 20px 18px 18px;
+      -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65);
+    }
+
+    .step-panel {
+      display: none;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .step-panel.active {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+    }
+
+    .step-title {
+      font-size: 1.22rem;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+
+    .step-subtitle {
+      font-size: 0.9rem;
+      color: #9ba4c0;
+      margin: 0 0 14px;
+      line-height: 1.65;
+    }
+
+    .stepper-header {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+      align-items: stretch;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #6c7390;
+      margin: 4px 0 16px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      right: auto;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      background: linear-gradient(90deg, #06b6d4, #038bc7);
+      border-radius: inherit;
+      -webkit-transition: width 0.35s ease-out;
+      transition: width 0.35s ease-out;
+    }
+
+    .stepper-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #b8c0d8;
+      text-align: left;
+    }
+
+    .step-footer {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      gap: 14px;
+      margin-top: 14px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .step-footer-left {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      gap: 10px;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+    }
+
+    .industry-benchmark-card {
+      border-radius: 14px;
+      background: rgba(3, 139, 199, 0.1);
+      border: 1px solid rgba(3, 139, 199, 0.3);
+      padding: 12px 14px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .benchmark-label {
+      font-size: 0.82rem;
+      color: #b8c0d8;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .benchmark-value {
+      font-size: 1rem;
+      color: #38b8e8;
+      font-weight: 600;
+    }
+
+    .benchmark-note {
+      font-size: 0.8rem;
+      color: #8b93b0;
+      line-height: 1.55;
+      font-style: italic;
+    }
+
+    .form-section {
+      border-radius: 16px;
+      background: rgba(10, 13, 24, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 14px 14px 12px;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-section-header {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .form-section-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .form-section-caption {
+      font-size: 0.82rem;
+      color: #8b93b0;
+      margin-top: 2px;
+      line-height: 1.55;
+    }
+
+    .form-grid {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-row {
+      display: -ms-grid;
+      display: grid;
+      -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      font-size: 0.84rem;
+      color: #c0c8e0;
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(6, 10, 22, 0.95);
+      color: #f7f9ff;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      outline: none;
+      -webkit-transition: border-color 0.15s ease-out, -webkit-box-shadow 0.15s ease-out, background 0.15s ease-out;
+      transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out, background 0.15s ease-out;
+    }
+
+    input[type="number"]:focus,
+    select:focus {
+      border-color: #038bc7;
+      -webkit-box-shadow: 0 0 0 1px rgba(3, 139, 199, 0.4);
+      box-shadow: 0 0 0 1px rgba(3, 139, 199, 0.4);
+      background: rgba(4, 10, 22, 0.98);
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: #8b93b0;
+      line-height: 1.6;
+    }
+
+    .benchmark-hint {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.79rem;
+      color: #038bc7;
+      line-height: 1.5;
+      margin-top: 2px;
+      flex-wrap: wrap;
+    }
+
+    .benchmark-hint.visible {
+      display: flex;
+    }
+
+    .benchmark-hint-icon {
+      font-size: 0.85rem;
+    }
+
+    .benchmark-hint-text {
+      color: #7dd3f0;
+    }
+
+    .benchmark-use-btn {
+      background: rgba(3, 139, 199, 0.14);
+      border: 1px solid rgba(3, 139, 199, 0.4);
+      border-radius: 999px;
+      color: #5bc8f0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      letter-spacing: 0.03em;
+      line-height: 1.6;
+    }
+
+    .benchmark-use-btn:hover {
+      background: rgba(3, 139, 199, 0.26);
+      border-color: rgba(3, 139, 199, 0.65);
+    }
+
+    .button-group {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      -webkit-box-pack: end;
+      -ms-flex-pack: end;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 10px 18px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: -webkit-inline-box;
+      display: -ms-inline-flexbox;
+      display: inline-flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      gap: 6px;
+      -webkit-transition: all 0.15s ease-out;
+      transition: all 0.15s ease-out;
+      background: rgba(8, 11, 22, 0.9);
+      color: #f7f9ff;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #06b6d4, #038bc7);
+      border-color: rgba(0, 0, 0, 0.7);
+      color: #001019;
+      font-weight: 600;
+      -webkit-box-shadow: 0 10px 25px rgba(3, 139, 199, 0.4);
+      box-shadow: 0 10px 25px rgba(3, 139, 199, 0.4);
+    }
+
+    .btn-primary:hover {
+      -webkit-box-shadow: 0 14px 35px rgba(3, 139, 199, 0.6);
+      box-shadow: 0 14px 35px rgba(3, 139, 199, 0.6);
+      -webkit-transform: translateY(-1px);
+      -ms-transform: translateY(-1px);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      border-color: transparent;
+      background: transparent;
+      color: #8b93b0;
+      padding-left: 6px;
+      padding-right: 6px;
+    }
+
+    .btn-ghost:hover {
+      color: #38b8e8;
+    }
+
+    .right-panel {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 4px;
+    }
+
+    .result-card {
+      border-radius: 24px;
+      background: radial-gradient(circle at top, rgba(3, 139, 199, 0.3), rgba(7, 11, 22, 0.98));
+      border: 1px solid rgba(3, 139, 199, 0.8);
+      padding: 20px 20px 18px;
+      -webkit-box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .result-card::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      right: -40%;
+      bottom: -40%;
+      left: -40%;
+      background:
+        radial-gradient(circle at 10% 0, rgba(3, 139, 199, 0.4), transparent 60%),
+        radial-gradient(circle at 90% 0, rgba(3, 139, 199, 0.25), transparent 55%),
+        radial-gradient(circle at 50% 120%, rgba(3, 139, 199, 0.35), transparent 50%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .result-inner {
+      position: relative;
+      z-index: 1;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .result-title {
+      font-size: 1.12rem;
+      margin: 0 0 6px;
+      font-weight: 600;
+    }
+
+    .result-subtitle {
+      font-size: 0.88rem;
+      color: #ced9ff;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .results-grid {
+      display: -ms-grid;
+      display: grid;
+      -ms-grid-columns: (minmax(0, 1fr))[2];
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .result-metric {
+      border-radius: 16px;
+      background: rgba(7, 11, 23, 0.98);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 11px 12px 10px;
+    }
+
+    .result-metric-label {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #b0bbd8;
+      margin-bottom: 4px;
+    }
+
+    .result-metric-value {
+      font-size: 1.22rem;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 4px;
+      color: #f7f9ff;
+    }
+
+    .result-metric-sub {
+      font-size: 0.78rem;
+      color: #8b93b0;
+      line-height: 1.5;
+    }
+
+    .result-helper {
+      font-size: 0.82rem;
+      color: #d0daff;
+      margin-top: 10px;
+      line-height: 1.6;
+    }
+
+    .assumptions-card {
+      border-radius: 18px;
+      background: rgba(8, 11, 20, 0.9);
+      border: 1px dashed rgba(148, 163, 184, 0.45);
+      padding: 14px 16px;
+      font-size: 0.81rem;
+      color: #8b93b0;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .assumptions-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #c0c8e0;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+      -ms-flex-align: center;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .assumption-bullet {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      gap: 8px;
+      -webkit-box-align: start;
+      -ms-flex-align: start;
+      align-items: flex-start;
+      line-height: 1.65;
+    }
+
+    .assumption-bullet span:first-child {
+      font-size: 0.85rem;
+      color: #38b8e8;
+      margin-top: 2px;
+    }
+
+    .error-box {
+      border-radius: 14px;
+      background: rgba(255, 92, 122, 0.1);
+      border: 1px solid rgba(255, 92, 122, 0.3);
+      padding: 12px 14px;
+      display: none;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .error-box.visible {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+    }
+
+    .error-text {
+      font-size: 0.75rem;
+      color: #ff5c7a;
+      line-height: 1.5;
+    }
+
+    .placeholder-state {
+      border-radius: 16px;
+      background: rgba(100, 116, 139, 0.1);
+      border: 1px dashed rgba(148, 163, 184, 0.3);
+      padding: 24px 16px;
+      text-align: center;
+      color: #6c7390;
+      font-size: 0.85rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 900px) {
+      .results-grid {
+        -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+      }
+
+      .field-row {
+        -ms-grid-columns: 1fr;
+        grid-template-columns: 1fr;
+      }
+    }
+
+    #downloadReportBtn {
+      width: 100%;
+      margin-top: 14px;
+      padding: 11px 18px;
+      border-radius: 999px;
+      border: 1px solid #374151;
+      background: #020617;
+      color: #6b7280;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: default;
+      opacity: 0.9;
+      transition: all 0.2s;
+    }
+
+    #downloadReportBtn.ready {
+      background: linear-gradient(90deg, #f97316, #fb923c);
+      color: #111827;
+      border-color: transparent;
+      opacity: 1;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.8);
+      cursor: pointer;
+    }
+
+    #downloadReportBtn.ready:hover { filter: brightness(1.05); }
+
+    .disclaimer-text {
+      font-size: 0.76rem;
+      color: #6c7390;
+      margin-top: 10px;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <h1>Executive Coaching ROI Calculator</h1>
+      <p>
+        Quantify the financial return of a 1:1 executive coaching program — from reduced turnover to improved business performance.
+      </p>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT PANEL: STEP-BY-STEP FORM -->
+      <section class="left-panel">
+        <div class="form-container">
+          <div class="form-inner">
+            <!-- Error Box -->
+            <div class="error-box" id="errorBox"></div>
+
+            <!-- Step Panels Container -->
+            <div class="step-panels">
+              <!-- STEP 1: Company Context -->
+              <div class="step-panel active" data-step="1">
+                <div>
+                  <h3 class="step-title">Your Organisation</h3>
+                  <p class="step-subtitle">
+                    We apply industry-specific benchmarks based on your sector and size.
+                  </p>
+
+                  <div class="stepper-header">
+                    <div class="progress-track">
+                      <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="stepper-label"><span id="stepNumber">Step 1 of 3</span></div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <div class="form-section-header">
+                    <div>
+                      <div class="form-section-title">Company Profile</div>
+                      <div class="form-section-caption">
+                        Sets the industry benchmarks used throughout the calculation.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="region">Region</label>
+                      <select id="region">
+                        <option value="">Select…</option>
+                        <option value="na">North America (NA)</option>
+                        <option value="emea" selected>Europe, Middle East and Africa (EMEA)</option>
+                        <option value="apac">Asia-Pacific (APAC)</option>
+                        <option value="latam">Latin America (LATAM)</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="industry">Industry</label>
+                      <select id="industry">
+                        <option value="">Select…</option>
+                        <option value="automotive">Automotive</option>
+                        <option value="banking_finance">Banking and Finance</option>
+                        <option value="education">Education</option>
+                        <option value="energy">Energy</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="healthcare_pharma">Healthcare and Pharma</option>
+                        <option value="hospitality">Hospitality</option>
+                        <option value="it">Information Technology</option>
+                        <option value="manufacturing_hitech">Manufacturing and Hitech</option>
+                        <option value="nonprofit">Nonprofit / NGO</option>
+                        <option value="oil_gas">Oil and Gas</option>
+                        <option value="professional_services">Professional Services</option>
+                        <option value="public_sector">Public Sector</option>
+                        <option value="retail">Retail</option>
+                        <option value="telecommunication">Telecommunication</option>
+                        <option value="transport_logistics">Transport and Logistics</option>
+                        <option value="other">Other (use global averages)</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="numEmployees">Total employees in company</label>
+                      <input id="numEmployees" type="number" min="1" placeholder="e.g. 500" />
+                      <div class="helper-text">Provides organisational context.</div>
+                    </div>
+
+                    <div class="field">
+                      <label for="currency">Currency</label>
+                      <select id="currency">
+                        <option value="USD">USD ($)</option>
+                        <option value="EUR">EUR (€)</option>
+                      </select>
+                    </div>
+
+                    <div class="field">
+                      <label for="annualRevenue">Annual revenue</label>
+                      <input id="annualRevenue" type="number" min="0" placeholder="e.g. 50000000" />
+                      <div class="helper-text">Used to estimate profit improvement. Leave blank for industry benchmark.</div>
+                      <div class="benchmark-hint" id="revenueHint">
+                        <span class="benchmark-hint-icon">📊</span>
+                        <span class="benchmark-hint-text" id="revenueHintText"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Industry Benchmark Indicator -->
+                <div class="industry-benchmark-card" id="benchmarkCard" style="display: none;">
+                  <div class="benchmark-label">📊 Industry Coaching Impact</div>
+                  <div class="benchmark-value" id="benchmarkValue">—</div>
+                  <div class="benchmark-note">
+                    Estimated turnover reduction from 1:1 coaching in your sector.
+                  </div>
+                </div>
+
+                <!-- Step 1 Footer -->
+                <div class="step-footer">
+                  <div class="step-footer-left">
+                    <button class="btn btn-ghost" type="button" id="resetBtn1">Reset</button>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" type="button" id="nextBtn1">Next: Coaching Cohort →</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- STEP 2: Who Will Be Coached & Investment -->
+              <div class="step-panel" data-step="2">
+                <div>
+                  <h3 class="step-title">The Coaching Program</h3>
+                  <p class="step-subtitle">
+                    Coaching your leaders creates both direct retention savings and a measurable team-level spillover effect.
+                  </p>
+
+                  <div class="stepper-header">
+                    <div class="progress-track">
+                      <div class="progress-bar" id="progressBar2"></div>
+                    </div>
+                    <div class="stepper-label"><span id="stepNumber2">Step 2 of 3</span></div>
+                  </div>
+                </div>
+
+                <!-- Cohort Section -->
+                <div class="form-section">
+                  <div class="form-section-header">
+                    <div>
+                      <div class="form-section-title">Coaching Cohort</div>
+                      <div class="form-section-caption">
+                        Each coachee is a people leader. Their development impacts both their own retention and their team's.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="numCoachees">Number of coachees</label>
+                      <input id="numCoachees" type="number" min="1" placeholder="e.g. 12" />
+                    </div>
+                    <div class="field">
+                      <label for="avgSalary">Average salary per coachee</label>
+                      <input id="avgSalary" type="number" min="1000" placeholder="e.g. 100000" />
+                      <div class="helper-text">Replacing a leader costs ~100% of their salary. Leave blank for industry benchmark.</div>
+                      <div class="benchmark-hint" id="salaryHint">
+                        <span class="benchmark-hint-icon">📊</span>
+                        <span class="benchmark-hint-text" id="salaryHintText"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Investment Section -->
+                <div class="form-section">
+                  <div class="form-section-header">
+                    <div>
+                      <div class="form-section-title">Program Investment</div>
+                      <div class="form-section-caption">
+                        Full program cost per participant for a complete 1:1 coaching engagement.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="costPerCoachee">Cost per coachee</label>
+                      <input id="costPerCoachee" type="number" min="0" placeholder="e.g. 2400" />
+                      <div class="helper-text">The investment against which ROI is calculated. Leave blank for industry benchmark.</div>
+                      <div class="benchmark-hint" id="costHint">
+                        <span class="benchmark-hint-icon">📊</span>
+                        <span class="benchmark-hint-text" id="costHintText"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 2 Footer -->
+                <div class="step-footer">
+                  <div class="step-footer-left">
+                    <button class="btn btn-ghost" type="button" id="prevBtn2">← Back</button>
+                    <button class="btn btn-ghost" type="button" id="resetBtn2">Reset</button>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" type="button" id="nextBtn2">Next: Turnover Impact →</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- STEP 3: Turnover Impact -->
+              <div class="step-panel" data-step="3">
+                <div>
+                  <h3 class="step-title">Leadership & Retention</h3>
+                  <p class="step-subtitle">
+                    Turnover is the primary financial lever of coaching ROI. Your industry benchmark is pre-applied — enter your own rate to personalise.
+                  </p>
+
+                  <div class="stepper-header">
+                    <div class="progress-track">
+                      <div class="progress-bar" id="progressBar3"></div>
+                    </div>
+                    <div class="stepper-label"><span id="stepNumber3">Step 3 of 3</span></div>
+                  </div>
+                </div>
+
+                <div class="form-section">
+                  <div class="form-section-header">
+                    <div>
+                      <div class="form-section-title">Current Turnover Rate</div>
+                      <div class="form-section-caption">
+                        Replacing a senior leader typically costs 100% of their annual salary. Coaching reduces that risk directly.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label for="currentTurnover">Current annual turnover rate (%)</label>
+                      <input id="currentTurnover" type="number" min="0" max="100" step="0.1" placeholder="e.g. 13" />
+                      <div class="helper-text">Leave blank to use the industry benchmark.</div>
+                      <div class="benchmark-hint" id="turnoverHint">
+                        <span class="benchmark-hint-icon">📊</span>
+                        <span class="benchmark-hint-text" id="turnoverHintText"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Step 3 Footer -->
+                <div class="step-footer">
+                  <div class="step-footer-left">
+                    <button class="btn btn-ghost" type="button" id="prevBtn3">← Back</button>
+                    <button class="btn btn-ghost" type="button" id="resetBtn3">Reset</button>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary" type="button" id="calculateBtn">Calculate ROI →</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: RESULTS -->
+      <section class="right-panel">
+        <div id="resultSection" style="display: none;">
+          <div class="result-card">
+            <div class="result-inner">
+              <div>
+                <h2 class="result-title">Your Coaching ROI</h2>
+                <p class="result-subtitle">Estimated financial return from reduced turnover and improved business performance</p>
+              </div>
+
+              <div class="results-grid">
+                <div class="result-metric">
+                  <div class="result-metric-label">ROI (%)</div>
+                  <div class="result-metric-value" id="roiValue">—</div>
+                  <div class="result-metric-sub">Net return on program cost</div>
+                </div>
+                <div class="result-metric">
+                  <div class="result-metric-label">Total Benefits</div>
+                  <div class="result-metric-value" id="totalBenefitValue">—</div>
+                  <div class="result-metric-sub">Retention savings + profit lift</div>
+                </div>
+                <div class="result-metric">
+                  <div class="result-metric-label">Total Investment</div>
+                  <div class="result-metric-value" id="investmentValue">—</div>
+                  <div class="result-metric-sub">Full program cost</div>
+                </div>
+                <div class="result-metric">
+                  <div class="result-metric-label">Cost Multiplier</div>
+                  <div class="result-metric-value" id="multiplierValue">—</div>
+                  <div class="result-metric-sub">Return per unit invested</div>
+                </div>
+              </div>
+
+              <div class="result-helper">
+                <strong>Breakdown:</strong> <span id="resultBreakdown">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="assumptions-card">
+            <div class="assumptions-title">📋 How This Is Calculated</div>
+            <div class="assumption-bullet">
+              <span>✓</span>
+              <span><strong>Leadership drives retention.</strong> Coached executives develop stronger communication and resilience — reducing their own likelihood of leaving and improving their team's stability too.</span>
+            </div>
+            <div class="assumption-bullet">
+              <span>✓</span>
+              <span><strong>Turnover is expensive.</strong> Replacing a senior leader costs ~100% of their annual salary (recruitment, onboarding, lost productivity). Every leader retained through coaching avoids that cost.</span>
+            </div>
+            <div class="assumption-bullet">
+              <span>✓</span>
+              <span><strong>Industry-calibrated impact.</strong> Turnover reduction is sector-specific, from 2024–2025 research. Examples: Hospitality 25%, Banking 20%, IT 16%, Public Sector 10%.</span>
+            </div>
+            <div class="assumption-bullet">
+              <span>✓</span>
+              <span><strong>Team spillover (5%).</strong> Each leader manages ~6 direct reports. Better leadership reduces team turnover by 5%, calculated at 65% of the leader's salary.</span>
+            </div>
+            <div class="assumption-bullet">
+              <span>✓</span>
+              <span><strong>Profit improvement.</strong> Stronger leadership lifts business performance, modelled as a 10 basis-point gain per coachee on company profit (6% assumed margin).</span>
+            </div>
+            <div class="assumption-bullet">
+              <span>ℹ️</span>
+              <span><strong>ROI = (Benefits − Investment) ÷ Investment.</strong> Benefits cover leader retention, team spillover, and profit improvement. All figures are directional estimates.</span>
+            </div>
+          </div>
+
+          <button type="button" id="downloadReportBtn" disabled>
+            Download the Full Report
+          </button>
+          <p class="disclaimer-text" id="disclaimerText">
+            Directional estimates for HR and business leaders. Use alongside your own organisational data for budgeting decisions.
+          </p>
+        </div>
+
+        <div id="placeholderSection">
+          <div class="placeholder-state">
+            Complete the three steps on the left and click <strong>"Calculate ROI"</strong> to see the estimated return from your executive coaching program.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Cross-browser compatible utility functions
+    var qs = function(selector) {
+      return document.querySelector(selector);
+    };
+    
+    var qsa = function(selector) {
+      return document.querySelectorAll(selector);
+    };
+
+    // ===== INDUSTRY FIELD BENCHMARKS =====
+    // Annual revenue benchmarks (USD, typical mid-market company per industry)
+    var INDUSTRY_REVENUE = {
+      "banking_finance":       { val: 500000000, label: "Typical mid-market: ~$500M" },
+      "healthcare_pharma":     { val: 300000000, label: "Typical mid-market: ~$300M" },
+      "it":                    { val: 200000000, label: "Typical mid-market: ~$200M" },
+      "professional_services": { val: 150000000, label: "Typical mid-market: ~$150M" },
+      "manufacturing_hitech":  { val: 250000000, label: "Typical mid-market: ~$250M" },
+      "retail":                { val: 400000000, label: "Typical mid-market: ~$400M" },
+      "hospitality":           { val: 120000000, label: "Typical mid-market: ~$120M" },
+      "education":             { val: 80000000,  label: "Typical mid-market: ~$80M" },
+      "automotive":            { val: 350000000, label: "Typical mid-market: ~$350M" },
+      "energy":                { val: 400000000, label: "Typical mid-market: ~$400M" },
+      "telecommunication":     { val: 500000000, label: "Typical mid-market: ~$500M" },
+      "nonprofit":             { val: 30000000,  label: "Typical mid-size NGO: ~$30M" },
+      "public_sector":         { val: 100000000, label: "Typical agency budget: ~$100M" },
+      "entertainment":         { val: 150000000, label: "Typical mid-market: ~$150M" },
+      "oil_gas":               { val: 600000000, label: "Typical mid-market: ~$600M" },
+      "transport_logistics":   { val: 200000000, label: "Typical mid-market: ~$200M" },
+      "other":                 { val: 271000000, label: "Global cross-industry average: ~$271M" }
+    };
+
+    // Average executive/leadership salary benchmarks (USD)
+    var INDUSTRY_SALARY = {
+      "banking_finance":       { val: 180000, label: "Industry avg executive: ~$180k" },
+      "healthcare_pharma":     { val: 160000, label: "Industry avg executive: ~$160k" },
+      "it":                    { val: 175000, label: "Industry avg executive: ~$175k" },
+      "professional_services": { val: 165000, label: "Industry avg executive: ~$165k" },
+      "manufacturing_hitech":  { val: 145000, label: "Industry avg executive: ~$145k" },
+      "retail":                { val: 130000, label: "Industry avg executive: ~$130k" },
+      "hospitality":           { val: 110000, label: "Industry avg executive: ~$110k" },
+      "education":             { val: 95000,  label: "Industry avg executive: ~$95k" },
+      "automotive":            { val: 140000, label: "Industry avg executive: ~$140k" },
+      "energy":                { val: 155000, label: "Industry avg executive: ~$155k" },
+      "telecommunication":     { val: 150000, label: "Industry avg executive: ~$150k" },
+      "nonprofit":             { val: 100000, label: "Industry avg executive: ~$100k" },
+      "public_sector":         { val: 105000, label: "Industry avg executive: ~$105k" },
+      "entertainment":         { val: 140000, label: "Industry avg executive: ~$140k" },
+      "oil_gas":               { val: 170000, label: "Industry avg executive: ~$170k" },
+      "transport_logistics":   { val: 120000, label: "Industry avg executive: ~$120k" },
+      "other":                 { val: 140000, label: "Global cross-industry average: ~$140k" }
+    };
+
+    // Cost per coachee benchmarks (USD, full executive coaching program)
+    var INDUSTRY_COST = {
+      "banking_finance":       { val: 4000, label: "High-touch sector typical: ~$4,000" },
+      "healthcare_pharma":     { val: 3500, label: "Industry typical: ~$3,500" },
+      "it":                    { val: 3000, label: "Industry typical: ~$3,000" },
+      "professional_services": { val: 3500, label: "Industry typical: ~$3,500" },
+      "manufacturing_hitech":  { val: 2800, label: "Industry typical: ~$2,800" },
+      "retail":                { val: 2400, label: "Industry typical: ~$2,400" },
+      "hospitality":           { val: 2200, label: "Industry typical: ~$2,200" },
+      "education":             { val: 2000, label: "Industry typical: ~$2,000" },
+      "automotive":            { val: 2800, label: "Industry typical: ~$2,800" },
+      "energy":                { val: 3200, label: "Industry typical: ~$3,200" },
+      "telecommunication":     { val: 2800, label: "Industry typical: ~$2,800" },
+      "nonprofit":             { val: 1800, label: "NGO/nonprofit typical: ~$1,800" },
+      "public_sector":         { val: 2000, label: "Public sector typical: ~$2,000" },
+      "entertainment":         { val: 2600, label: "Industry typical: ~$2,600" },
+      "oil_gas":               { val: 3500, label: "Industry typical: ~$3,500" },
+      "transport_logistics":   { val: 2400, label: "Industry typical: ~$2,400" },
+      "other":                 { val: 2800, label: "Global cross-industry average: ~$2,800" }
+    };
+
+    // Turnover baseline benchmarks (leadership-level annual turnover %)
+    var INDUSTRY_TURNOVER_BASELINE = {
+      "banking_finance":       { val: 23,  label: "Industry avg leadership turnover: ~23%" },
+      "healthcare_pharma":     { val: 21,  label: "Industry avg leadership turnover: ~21%" },
+      "it":                    { val: 13,  label: "Industry avg leadership turnover: ~13%" },
+      "professional_services": { val: 21,  label: "Industry avg leadership turnover: ~21%" },
+      "manufacturing_hitech":  { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+      "retail":                { val: 20,  label: "Industry avg leadership turnover: ~20%" },
+      "hospitality":           { val: 30,  label: "Industry avg leadership turnover: ~30%" },
+      "education":             { val: 11,  label: "Industry avg leadership turnover: ~11%" },
+      "automotive":            { val: 19,  label: "Industry avg leadership turnover: ~19%" },
+      "energy":                { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+      "telecommunication":     { val: 15,  label: "Industry avg leadership turnover: ~15%" },
+      "nonprofit":             { val: 16,  label: "Industry avg leadership turnover: ~16%" },
+      "public_sector":         { val: 11,  label: "Industry avg leadership turnover: ~11%" },
+      "entertainment":         { val: 17,  label: "Industry avg leadership turnover: ~17%" },
+      "oil_gas":               { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+      "transport_logistics":   { val: 14,  label: "Industry avg leadership turnover: ~14%" },
+      "other":                 { val: 17,  label: "Global cross-industry average: ~17%" }
+    };
+
+    function updateFieldBenchmarks(industry) {
+      var revenueHint   = qs("#revenueHint");
+      var salaryHint    = qs("#salaryHint");
+      var costHint      = qs("#costHint");
+      var turnoverHint  = qs("#turnoverHint");
+
+      if (industry && industry in INDUSTRY_REVENUE) {
+        qs("#revenueHintText").textContent  = "Auto-applied if blank: " + INDUSTRY_REVENUE[industry].label;
+        qs("#salaryHintText").textContent   = "Auto-applied if blank: " + INDUSTRY_SALARY[industry].label;
+        qs("#costHintText").textContent     = "Auto-applied if blank: " + INDUSTRY_COST[industry].label;
+        qs("#turnoverHintText").textContent = "Auto-applied if blank: " + INDUSTRY_TURNOVER_BASELINE[industry].label;
+        revenueHint.classList.add("visible");
+        salaryHint.classList.add("visible");
+        costHint.classList.add("visible");
+        turnoverHint.classList.add("visible");
+      } else {
+        revenueHint.classList.remove("visible");
+        salaryHint.classList.remove("visible");
+        costHint.classList.remove("visible");
+        turnoverHint.classList.remove("visible");
+      }
+    }
+
+    // Wire up "Use benchmark" buttons — removed (benchmarks now apply automatically)
+    // Based on 2024-2025 industry research on executive coaching impact
+    // These are the % of current turnover reduction from coaching
+    var INDUSTRY_TURNOVER_REDUCTION = {
+      "banking_finance": 20,           // Conservative, high-value roles; 23% baseline turnover
+      "healthcare_pharma": 22,         // Leadership-driven retention critical; 20.7% baseline
+      "it": 16,                        // Competitive market, highly mobile; 13.2% baseline
+      "professional_services": 19,     // High-pressure, coaching valued; 20.7% baseline
+      "manufacturing_hitech": 15,      // Skilled workforce; moderate turnover
+      "retail": 25,                    // High baseline turnover; proven coaching impact
+      "hospitality": 25,               // Proven case study (75.2% baseline → 56% with coaching)
+      "education": 12,                 // Already stable sector; marginal gains
+      "automotive": 14,                // Moderate impact; 18.9% baseline
+      "energy": 14,                    // Skilled workforce; moderate impact
+      "telecommunication": 15,         // Moderate impact
+      "nonprofit": 16,                 // Increasing focus on retention
+      "public_sector": 10,             // Already stable (11.4% baseline); marginal gains
+      "entertainment": 17,             // Moderate competitive pressure
+      "oil_gas": 14,                   // Skilled workforce; moderate impact
+      "transport_logistics": 14,        // Moderate impact
+      "other": 17                       // Cross-industry global average
+    };
+
+    // Step management
+    var currentStep = 1;
+    var totalSteps = 3;
+    var selectedCurrency = 'USD';
+    var selectedIndustry = '';
+    var selectedTurnoverReduction = 0;
+
+    function updateProgressBar() {
+      var progress = (currentStep / totalSteps) * 100;
+      var progressBars = qsa(".progress-bar");
+      progressBars.forEach(function(bar) {
+        bar.style.width = progress + "%";
+      });
+    }
+
+    function updateStepDisplay() {
+      var panels = qsa(".step-panel");
+      panels.forEach(function(panel) {
+        panel.classList.remove("active");
+      });
+      
+      var activePanel = qs(".step-panel[data-step='" + currentStep + "']");
+      if (activePanel) {
+        activePanel.classList.add("active");
+      }
+      
+      updateProgressBar();
+    }
+
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        updateStepDisplay();
+      }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateStepDisplay();
+      }
+    }
+
+    function formatCurrency(n) {
+      if (!isFinite(n) || n === 0) return "—";
+      var currencySymbol = selectedCurrency === 'EUR' ? '€' : '$';
+      if (Math.abs(n) >= 1000000) {
+        return currencySymbol + (n / 1000000).toFixed(1) + "M";
+      }
+      if (Math.abs(n) >= 1000) {
+        return currencySymbol + (n / 1000).toFixed(0) + "k";
+      }
+      return currencySymbol + Math.round(n).toString();
+    }
+
+    function formatPercent(n) {
+      if (!isFinite(n)) return "—";
+      return Math.round(n) + "%";
+    }
+
+    function formatMultiplier(n) {
+      if (!isFinite(n)) return "—";
+      return n.toFixed(2) + "x";
+    }
+
+    function showError(message) {
+      var errorBox = qs("#errorBox");
+      errorBox.textContent = message;
+      errorBox.classList.add("visible");
+    }
+
+    function clearError() {
+      var errorBox = qs("#errorBox");
+      errorBox.textContent = "";
+      errorBox.classList.remove("visible");
+    }
+
+    function calculateROI() {
+      clearError();
+
+      var industry = qs("#industry").value;
+
+      // Read raw field values
+      var annualRevenueRaw  = qs("#annualRevenue").value.trim();
+      var avgSalaryRaw      = qs("#avgSalary").value.trim();
+      var currentTurnoverRaw = qs("#currentTurnover").value.trim();
+      var costPerCoacheeRaw  = qs("#costPerCoachee").value.trim();
+
+      var numEmployees = Number(qs("#numEmployees").value) || 0;
+      var numCoachees  = Number(qs("#numCoachees").value) || 0;
+
+      // Auto-apply industry benchmarks for any blank field
+      var annualRevenue  = annualRevenueRaw !== ""   ? Number(annualRevenueRaw)   : (industry && INDUSTRY_REVENUE[industry]          ? INDUSTRY_REVENUE[industry].val          : 0);
+      var avgSalary      = avgSalaryRaw !== ""       ? Number(avgSalaryRaw)       : (industry && INDUSTRY_SALARY[industry]           ? INDUSTRY_SALARY[industry].val           : 0);
+      var currentTurnover = currentTurnoverRaw !== "" ? Number(currentTurnoverRaw) : (industry && INDUSTRY_TURNOVER_BASELINE[industry] ? INDUSTRY_TURNOVER_BASELINE[industry].val : 13);
+      var costPerCoachee = costPerCoacheeRaw !== ""  ? Number(costPerCoacheeRaw)  : (industry && INDUSTRY_COST[industry]             ? INDUSTRY_COST[industry].val             : 2400);
+
+      // Validation — only hard-require industry, employees, coachees
+      var messages = [];
+      if (!industry) messages.push("Select your industry.");
+      if (numEmployees <= 0) messages.push("Enter total employees.");
+      if (numCoachees <= 0) messages.push("Enter number of coachees.");
+      if (currentTurnover < 0 || currentTurnover > 100) messages.push("Turnover rate must be 0–100%.");
+      if (costPerCoachee < 0) messages.push("Cost per coachee cannot be negative.");
+
+      if (messages.length > 0) {
+        showError(messages.join(" "));
+        return;
+      }
+
+      // ===== CALCULATIONS (Industry Benchmark-Based) =====
+      // Turnover reduction is based on industry research and coaching effectiveness studies
+      var turnoverReduction = (industry in INDUSTRY_TURNOVER_REDUCTION) 
+        ? INDUSTRY_TURNOVER_REDUCTION[industry] 
+        : 17;  // Global average fallback
+
+      // 1. Direct impact: Coachees retained
+      var postTurnover = currentTurnover * (1 - turnoverReduction / 100);
+      var coacheesRetained = ((currentTurnover - postTurnover) / 100) * numCoachees;
+      var directSavings = coacheesRetained * avgSalary;
+
+      // 2. Indirect impact: Teams impacted by coaching
+      var reportsPerLeader = 6;
+      var totalReports = numCoachees * reportsPerLeader;
+      var reportTurnoverReduction = 5; // 5% reduction in team turnover
+      var reportSalaryRatio = 0.65;
+      var reportsRetained = ((reportTurnoverReduction / 100) * (currentTurnover / 100)) * totalReports;
+      var indirectSavings = reportsRetained * avgSalary * reportSalaryRatio;
+
+      // 3. Profit improvement
+      var profitMargin = 0.06; // 6% assumed profit margin
+      var profitLift = (annualRevenue * profitMargin * 0.0001) * numCoachees; // 10 bps per coachee
+      var totalBenefits = directSavings + indirectSavings + (profitLift > 0 ? profitLift : 0);
+
+      // 4. Investment
+      var totalInvestment = costPerCoachee * numCoachees;
+
+      // 5. ROI calculation
+      var roi = totalInvestment > 0 ? ((totalBenefits - totalInvestment) / totalInvestment) * 100 : 0;
+      var multiplier = totalInvestment > 0 ? totalBenefits / totalInvestment : 0;
+
+      // Display results
+      qs("#roiValue").textContent = formatPercent(roi);
+      qs("#totalBenefitValue").textContent = formatCurrency(totalBenefits);
+      qs("#investmentValue").textContent = formatCurrency(totalInvestment);
+      qs("#multiplierValue").textContent = formatMultiplier(multiplier);
+
+      // Breakdown text
+      var breakdownText = formatCurrency(directSavings) + " from reducing leader turnover + " + 
+                          formatCurrency(indirectSavings) + " from team impact" + 
+                          (profitLift > 0 ? " + " + formatCurrency(profitLift) + " profit improvement" : "") + 
+                          " = " + formatCurrency(totalBenefits) + " total value";
+      qs("#resultBreakdown").textContent = breakdownText;
+
+      // Show results, hide placeholder
+      qs("#resultSection").style.display = "block";
+      qs("#placeholderSection").style.display = "none";
+
+      // Enable PDF download button
+      var dlBtn = qs("#downloadReportBtn");
+      if (dlBtn) { dlBtn.disabled = false; dlBtn.classList.add("ready"); }
+    }
+
+    function resetForm() {
+      qs("#currency").value = "USD";
+      selectedCurrency = 'USD';
+      qs("#region").value = "emea";
+      qs("#industry").value = "";
+      qs("#numEmployees").value = "";
+      qs("#annualRevenue").value = "";
+      qs("#numCoachees").value = "";
+      qs("#avgSalary").value = "";
+      qs("#currentTurnover").value = "";
+      qs("#costPerCoachee").value = "";
+
+      selectedIndustry = '';
+      selectedTurnoverReduction = 0;
+      qs("#benchmarkCard").style.display = "none";
+      updateFieldBenchmarks('');
+
+      clearError();
+      currentStep = 1;
+      updateStepDisplay();
+      qs("#resultSection").style.display = "none";
+      qs("#placeholderSection").style.display = "block";
+
+      // Reset PDF download button
+      var dlBtn = qs("#downloadReportBtn");
+      if (dlBtn) { dlBtn.disabled = true; dlBtn.classList.remove("ready"); }
+    }
+
+    // Event listeners for navigation
+    var nextBtn1 = qs("#nextBtn1");
+    if (nextBtn1) {
+      nextBtn1.addEventListener("click", nextStep);
+    }
+
+    var nextBtn2 = qs("#nextBtn2");
+    if (nextBtn2) {
+      nextBtn2.addEventListener("click", nextStep);
+    }
+
+    var prevBtn2 = qs("#prevBtn2");
+    if (prevBtn2) {
+      prevBtn2.addEventListener("click", prevStep);
+    }
+
+    var prevBtn3 = qs("#prevBtn3");
+    if (prevBtn3) {
+      prevBtn3.addEventListener("click", prevStep);
+    }
+
+    // Currency selector
+    var currencySelect = qs("#currency");
+    if (currencySelect) {
+      currencySelect.addEventListener("change", function(e) {
+        selectedCurrency = e.target.value;
+      });
+    }
+
+    // Industry selector - shows benchmark
+    var industrySelect = qs("#industry");
+    if (industrySelect) {
+      industrySelect.addEventListener("change", function(e) {
+        var selected = e.target.value;
+        selectedIndustry = selected;
+        var benchmarkCard = qs("#benchmarkCard");
+        var benchmarkValue = qs("#benchmarkValue");
+        
+        if (selected && selected in INDUSTRY_TURNOVER_REDUCTION) {
+          selectedTurnoverReduction = INDUSTRY_TURNOVER_REDUCTION[selected];
+          benchmarkValue.textContent = selectedTurnoverReduction + "% turnover reduction (industry benchmark)";
+          benchmarkCard.style.display = "flex";
+        } else {
+          benchmarkCard.style.display = "none";
+          selectedTurnoverReduction = 0;
+        }
+
+        updateFieldBenchmarks(selected);
+      });
+    }
+
+    // Reset buttons
+    var resetBtn1 = qs("#resetBtn1");
+    if (resetBtn1) {
+      resetBtn1.addEventListener("click", resetForm);
+    }
+
+    var resetBtn2 = qs("#resetBtn2");
+    if (resetBtn2) {
+      resetBtn2.addEventListener("click", resetForm);
+    }
+
+    var resetBtn3 = qs("#resetBtn3");
+    if (resetBtn3) {
+      resetBtn3.addEventListener("click", resetForm);
+    }
+
+    // Calculate button
+    var calculateBtn = qs("#calculateBtn");
+    if (calculateBtn) {
+      calculateBtn.addEventListener("click", calculateROI);
+    }
+
+    // Allow Enter key to navigate or calculate
+    document.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        if (currentStep === 1) {
+          nextStep();
+        } else if (currentStep === 2) {
+          nextStep();
+        } else if (currentStep === 3) {
+          calculateROI();
+        }
+      }
+    });
+
+    // Initialize progress bar
+    updateProgressBar();
+
+    // ---- PDF GENERATION (pdf-lib) ----
+
+    var SPEEXX_LOGO_SVG = '<?xml version="1.0" encoding="UTF-8"?>\
+<svg id="Ebene_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1200 259">\
+  <defs><style>.st0{fill:#ff7900;}</style></defs>\
+  <polygon class="st0" points="1005.72 192.6 1063.24 192.6 1102.02 133.52 1141.64 192.6 1200 192.6 1131.2 93.06 1192.68 5.64 1135.28 5.64 1102.86 54.27 1069.72 5.64 1011.37 5.64 1072.96 93.9 1005.72 192.6"/>\
+  <path d="M801.84,192.6h57.39l38.78-59.08,38.78,59.08h58.23l-68.56-99.54,61.48-87.41h-56.67l-32.42,48.51-33.14-48.51h-59.08l61.48,88.97-66.28,97.98Z"/>\
+  <path d="M668.32,79.37c.84-14.53,10.57-39.62,42.87-39.62,25.1,0,36.38,13.81,41.3,39.62h-84.17ZM803.52,111.67c3.24-57.39-27.5-110.83-90.65-110.83-56.67,0-95.46,42.87-95.46,98.7s36.38,98.7,95.46,98.7c42.03,0,72.88-18.61,87.41-63.16h-45.27c-3.24,11.29-20.17,24.25-40.46,24.25-28.34,0-44.55-14.53-46.11-47.79h135.08v.12Z"/>\
+  <path d="M462.76,79.37c.84-14.53,10.57-39.62,42.87-39.62,25.1,0,36.38,13.81,41.3,39.62h-84.17ZM597.96,111.67c3.24-57.39-27.5-110.83-90.65-110.83-56.67,0-95.46,42.87-95.46,98.7s36.38,98.7,95.46,98.7c42.03,0,72.88-18.61,87.41-63.16h-45.27c-3.24,11.29-20.17,24.25-40.46,24.25-28.34,0-44.55-14.53-46.11-47.79h135.08v.12Z"/>\
+  <path d="M296.94,158.62c-33.14,0-44.55-29.18-44.55-59.08s10.57-60.64,44.55-60.64,44.55,30.74,44.55,60.64c0,30.74-11.41,59.08-44.55,59.08M202.2,259h51.75v-89.81h.84c12.13,18.61,33.98,28.34,55.83,28.34,54.99,0,82.49-46.95,82.49-96.3,0-53.43-26.66-100.38-85.01-100.38-23.41,0-43.71,8.89-55.83,29.18h-1.56V5.76h-48.51v253.23h0Z"/>\
+  <path d="M0,131.96c2.4,49.35,44.55,65.56,88.25,65.56s85.73-16.21,85.73-65.56c0-34.82-29.18-45.27-59.08-52.59-29.18-7.32-58.23-9.73-58.23-27.5,0-15.37,17.05-17.05,28.34-17.05,18.61,0,33.98,5.64,34.82,25.1h48.39C164.14,13.81,126.92,0,85.73,0S3.96,12.13,3.96,59.92c0,33.14,29.9,43.71,59.08,50.19,37.22,8.04,58.23,13.81,58.23,29.18,0,17.77-18.61,24.25-33.98,24.25-20.17,0-38.78-8.89-39.62-31.58H0Z"/>\
+</svg>';
+
+    function svgToPngDataUrl(svgText, width, height) {
+      return new Promise(function (resolve, reject) {
+        var svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+        var url = URL.createObjectURL(svgBlob);
+        var img = new Image();
+        img.onload = function () {
+          var canvas = document.createElement('canvas');
+          canvas.width = width; canvas.height = height;
+          var ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+          URL.revokeObjectURL(url);
+          resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = function (e) { URL.revokeObjectURL(url); reject(e); };
+        img.src = url;
+      });
+    }
+
+    function wrapText(text, font, size, maxWidth) {
+      if (!text) return [];
+      var words = text.split(' ');
+      var lines = [];
+      var currentLine = words[0];
+      for (var i = 1; i < words.length; i++) {
+        var word = words[i];
+        if (font.widthOfTextAtSize(currentLine + ' ' + word, size) < maxWidth) {
+          currentLine += ' ' + word;
+        } else {
+          lines.push(currentLine);
+          currentLine = word;
+        }
+      }
+      lines.push(currentLine);
+      return lines;
+    }
+
+    function getSelectText(id) {
+      var el = document.getElementById(id);
+      return (el && el.selectedIndex !== -1) ? el.options[el.selectedIndex].text : '';
+    }
+
+    async function generatePdfReport() {
+      var roiText = qs('#roiValue').textContent.trim();
+      if (!roiText || roiText === '—') {
+        alert('Please run the calculation before downloading the report.');
+        return;
+      }
+
+      // Collect result values
+      var roiValOnly       = roiText.replace('%', '');
+      var benefitText      = qs('#totalBenefitValue').textContent.trim();
+      var investmentText   = qs('#investmentValue').textContent.trim();
+      var multiplierText   = qs('#multiplierValue').textContent.trim();
+      var breakdownText    = qs('#resultBreakdown').textContent.trim();
+      var disclaimerText   = qs('#disclaimerText').textContent.trim();
+
+      // Collect input values for detail tables
+      var regionTxt        = getSelectText('region');
+      var industryTxt      = getSelectText('industry');
+      var currencyTxt      = getSelectText('currency');
+      var numEmployeesVal  = qs('#numEmployees').value || '—';
+      var numCoacheesVal   = qs('#numCoachees').value || '—';
+
+      var annualRevenueRaw = qs('#annualRevenue').value.trim();
+      var avgSalaryRaw     = qs('#avgSalary').value.trim();
+      var costRaw          = qs('#costPerCoachee').value.trim();
+      var turnoverRaw      = qs('#currentTurnover').value.trim();
+
+      var industry = qs('#industry').value;
+      var currSym  = selectedCurrency === 'EUR' ? 'EUR ' : '$';
+
+      var avgSalaryVal   = avgSalaryRaw !== ''     ? avgSalaryRaw     : (INDUSTRY_SALARY[industry]           ? INDUSTRY_SALARY[industry].val + ' (benchmark)'           : '—');
+      var costVal        = costRaw !== ''           ? costRaw          : (INDUSTRY_COST[industry]             ? INDUSTRY_COST[industry].val + ' (benchmark)'             : '—');
+      var turnoverVal    = turnoverRaw !== ''       ? turnoverRaw + '%' : (INDUSTRY_TURNOVER_BASELINE[industry] ? INDUSTRY_TURNOVER_BASELINE[industry].val + '% (benchmark)' : '—');
+      var revenueVal     = annualRevenueRaw !== ''  ? annualRevenueRaw  : (INDUSTRY_REVENUE[industry]          ? INDUSTRY_REVENUE[industry].label                          : '—');
+      var reductionVal   = (INDUSTRY_TURNOVER_REDUCTION[industry] || 17) + '% (industry benchmark)';
+
+      // Format salary and cost with currency symbol if they are plain numbers
+      if (!isNaN(avgSalaryRaw) && avgSalaryRaw !== '') avgSalaryVal = currSym + Number(avgSalaryRaw).toLocaleString('en-US');
+      else if (INDUSTRY_SALARY[industry] && avgSalaryRaw === '') avgSalaryVal = currSym + INDUSTRY_SALARY[industry].val.toLocaleString('en-US') + ' (benchmark)';
+      if (!isNaN(costRaw) && costRaw !== '') costVal = currSym + Number(costRaw).toLocaleString('en-US');
+      else if (INDUSTRY_COST[industry] && costRaw === '') costVal = currSym + INDUSTRY_COST[industry].val.toLocaleString('en-US') + ' (benchmark)';
+
+      // PDF setup
+      var PDFDocument   = PDFLib.PDFDocument;
+      var StandardFonts = PDFLib.StandardFonts;
+      var rgb           = PDFLib.rgb;
+
+      var pdfDoc = await PDFDocument.create();
+      var page   = pdfDoc.addPage([595.28, 841.89]);
+      var width  = page.getWidth();
+      var height = page.getHeight();
+
+      var colOrange      = rgb(1, 0.4745, 0);
+      var colDark        = rgb(0.102, 0.102, 0.102);
+      var colMuted       = rgb(0.4, 0.4, 0.4);
+      var colBgGray      = rgb(0.973, 0.976, 0.98);
+      var colBorder      = rgb(0.878, 0.878, 0.878);
+      var colHighlightBg = rgb(1, 0.957, 0.902);
+
+      var fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      var fontBold    = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      var margin   = 57;
+      var contentW = width - (margin * 2);
+      var boxGap   = 20;
+      var boxW     = (contentW - boxGap) / 2;
+
+      // ZONE 1: Logo
+      var logoW = 104.22, logoH = 22.5, logoTopY = 32;
+      var logoPng   = await svgToPngDataUrl(SPEEXX_LOGO_SVG, 300, 65);
+      var logoImage = await pdfDoc.embedPng(logoPng);
+      page.drawImage(logoImage, { x: margin, y: height - logoTopY - logoH, width: logoW, height: logoH });
+
+      // ZONE 2: Title block — start 32pt lower to double the logo-to-title gap
+      var curY = height - 118.5;
+      page.drawText('Your Executive Coaching ROI Report', { x: margin, y: curY, size: 24, font: fontBold, color: colDark });
+      curY -= 25;
+      page.drawText('Estimate the return on investment of a 1:1 executive coaching program for your organisation.', { x: margin, y: curY, size: 12, font: fontRegular, color: colDark });
+      curY -= 20;
+      page.drawText('Report Generated on ' + new Date().toLocaleDateString('en-GB'), { x: margin, y: curY, size: 10, font: fontRegular, color: colMuted });
+      curY -= 18;
+
+      // ZONE 3: ROI Banner — internal padding mirrors the metric boxes exactly
+      var roiSubY_off   = 13;                        // sub-line: same as metric boxes
+      var roiLabelY_off = roiSubY_off + 12;          // label: same gap as metric boxes
+      var roiNumY_off   = roiLabelY_off + 14;        // number baseline
+      var bannerH = roiNumY_off + 43 + 13;           // top padding matches bottom (13pt), cap height of 62pt = ~43pt
+      var bannerY = curY - bannerH;
+      page.drawRectangle({ x: margin, y: bannerY, width: contentW, height: bannerH, color: colBgGray, borderColor: colBorder, borderWidth: 1 });
+      var roiNumY   = bannerY + roiNumY_off;
+      var roiLabelY = bannerY + roiLabelY_off;
+      var roiSubY   = bannerY + roiSubY_off;
+      page.drawText(roiValOnly + '%', { x: margin + 12, y: roiNumY, size: 62, font: fontBold, color: colOrange });
+      page.drawText('ROI (Return on Investment)', { x: margin + 12, y: roiLabelY, size: 11, font: fontRegular, color: colMuted });
+      page.drawText('Executive Coaching Program - ' + numCoacheesVal + ' Coachee' + (parseInt(numCoacheesVal) !== 1 ? 's' : ''), { x: margin + 12, y: roiSubY, size: 10, font: fontRegular, color: colMuted });
+      curY -= (bannerH + 25);
+
+      // ZONE 4: Three metric boxes — Total Benefits | Total Investment | Cost Multiplier
+      var box3W = (contentW - boxGap * 2) / 3;
+      var boxH  = 80;
+      var boxY  = curY - boxH;
+
+      page.drawRectangle({ x: margin, y: boxY, width: box3W, height: boxH, color: colBgGray, borderColor: colBorder, borderWidth: 1 });
+      page.drawText(benefitText, { x: margin + 12, y: boxY + 45, size: 20, font: fontBold, color: colOrange });
+      page.drawText('Total Benefits', { x: margin + 12, y: boxY + 26, size: 9, font: fontRegular, color: colMuted });
+      page.drawText('Cost savings + profit lift', { x: margin + 12, y: boxY + 13, size: 7.5, font: fontRegular, color: colMuted });
+
+      var b2x = margin + box3W + boxGap;
+      page.drawRectangle({ x: b2x, y: boxY, width: box3W, height: boxH, color: colBgGray, borderColor: colBorder, borderWidth: 1 });
+      page.drawText(investmentText, { x: b2x + 12, y: boxY + 45, size: 20, font: fontBold, color: colOrange });
+      page.drawText('Total Investment', { x: b2x + 12, y: boxY + 26, size: 9, font: fontRegular, color: colMuted });
+      page.drawText('Full coaching program cost', { x: b2x + 12, y: boxY + 13, size: 7.5, font: fontRegular, color: colMuted });
+
+      var b3x = margin + (box3W + boxGap) * 2;
+      page.drawRectangle({ x: b3x, y: boxY, width: box3W, height: boxH, color: colBgGray, borderColor: colBorder, borderWidth: 1 });
+      page.drawText(multiplierText, { x: b3x + 12, y: boxY + 45, size: 20, font: fontBold, color: colOrange });
+      page.drawText('Cost Multiplier', { x: b3x + 12, y: boxY + 26, size: 9, font: fontRegular, color: colMuted });
+      page.drawText('\u00d7 your investment', { x: b3x + 12, y: boxY + 13, size: 7.5, font: fontRegular, color: colMuted });
+
+      curY -= (boxH + 25);
+
+      // ZONE 5: Info paragraph (breakdown line)
+      var infoLines = wrapText(pdfSafe('Breakdown: ' + breakdownText), fontRegular, 9, contentW);
+      infoLines.forEach(function(line) {
+        page.drawText(line, { x: margin, y: curY, size: 9, font: fontRegular, color: colMuted });
+        curY -= 14;
+      });
+      curY -= 10;
+
+      // ZONE 6: ROI formula callout
+      var roiFormulaLines = wrapText(pdfSafe('ROI = (Benefits - Investment) / Investment. Benefits cover leader retention, team spillover, and profit improvement. All figures are directional estimates.'), fontBold, 9, contentW);
+      roiFormulaLines.forEach(function(line) {
+        page.drawText(line, { x: margin, y: curY, size: 9, font: fontBold, color: colDark });
+        curY -= 13;
+      });
+      curY -= 18;
+
+      // ZONE 7: Two-Column Detail Tables
+      function drawTableSection(title, startX, startY, rows) {
+        var yPos = startY;
+        page.drawText(pdfSafe(title), { x: startX, y: yPos, size: 14, font: fontBold, color: colDark });
+        page.drawRectangle({ x: startX, y: yPos - 6, width: boxW, height: 1, color: colBorder });
+        yPos -= 25;
+        for (var i = 0; i < rows.length; i++) {
+          var r = rows[i];
+          var safeLabel = pdfSafe(r.label + ':');
+          var safeValue = pdfSafe(r.value);
+          page.drawText(safeLabel, { x: startX, y: yPos, size: 9.5, font: fontRegular, color: colMuted });
+          var valW = fontBold.widthOfTextAtSize(safeValue, 9.5);
+          page.drawText(safeValue, { x: startX + boxW - valW, y: yPos, size: 9.5, font: fontBold, color: colDark });
+          yPos -= 8;
+          page.drawLine({ start: { x: startX, y: yPos }, end: { x: startX + boxW, y: yPos }, thickness: 1, color: colBorder });
+          yPos -= 15;
+        }
+        return yPos;
+      }
+
+      var col1X = margin;
+      var col2X = margin + boxW + boxGap;
+
+      // Left column: Company Profile + Coaching Program
+      var endY1 = drawTableSection('Company Profile', col1X, curY, [
+        { label: 'Region',          value: regionTxt },
+        { label: 'Industry',        value: industryTxt },
+        { label: 'Currency',        value: currencyTxt },
+        { label: 'Total Employees', value: numEmployeesVal },
+        { label: 'Annual Revenue',  value: revenueVal }
+      ]);
+      drawTableSection('Coaching Program', col1X, endY1 - 10, [
+        { label: 'Coachees',         value: numCoacheesVal },
+        { label: 'Avg. Salary',      value: avgSalaryVal },
+        { label: 'Cost / Coachee',   value: costVal }
+      ]);
+
+      // Right column: Turnover Assumptions + Financial Results
+      var endY2 = drawTableSection('Turnover Assumptions', col2X, curY, [
+        { label: 'Current Rate',            value: turnoverVal },
+        { label: 'Coaching Impact',         value: reductionVal },
+        { label: 'Team Spillover',          value: '5% (fixed)' },
+        { label: 'Direct Reports / Leader', value: '6 (assumed)' },
+        { label: 'Replacement Cost',        value: '100% of salary' }
+      ]);
+      drawTableSection('Financial Results', col2X, endY2 - 10, [
+        { label: 'Total Benefits',    value: benefitText },
+        { label: 'Total Investment',  value: investmentText },
+        { label: 'Cost Multiplier',   value: multiplierText },
+        { label: 'ROI',               value: roiText }
+      ]);
+
+      // ZONE 8: Disclaimer (pinned to bottom margin)
+      var disText  = pdfSafe('Disclaimer: ' + disclaimerText + ' All values are estimates based on typical benchmarks and assumptions. Actual outcomes will depend on programme design, coachee engagement, management support, and broader business conditions.');
+      var disLines = wrapText(disText, fontRegular, 7, contentW);
+      var disLineY = margin + ((disLines.length - 1) * 10);
+      disLines.forEach(function(line, idx) {
+        if (idx === 0 && line.startsWith('Disclaimer')) {
+          page.drawText('Disclaimer', { x: margin, y: disLineY, size: 7, font: fontBold, color: colDark });
+          var off = fontBold.widthOfTextAtSize('Disclaimer', 7);
+          page.drawText(line.substring(10), { x: margin + off, y: disLineY, size: 7, font: fontRegular, color: colMuted });
+        } else {
+          page.drawText(line, { x: margin, y: disLineY, size: 7, font: fontRegular, color: colMuted });
+        }
+        disLineY -= 10;
+      });
+
+      // =====================================================================
+      // PAGE 2: Methodology & Explanations
+      // =====================================================================
+      var page2 = pdfDoc.addPage([595.28, 841.89]);
+
+      // Reuse same colour/font/geometry constants from page 1
+
+      // PAGE 2 — ZONE 1: Logo (identical placement to page 1)
+      var logo2Png   = await svgToPngDataUrl(SPEEXX_LOGO_SVG, 300, 65);
+      var logo2Image = await pdfDoc.embedPng(logo2Png);
+      page2.drawImage(logo2Image, { x: margin, y: height - logoTopY - logoH, width: logoW, height: logoH });
+
+      // PAGE 2 — Title block
+      var p2Y = height - 118.5;
+      page2.drawText(pdfSafe('Understanding Your ROI Report'), { x: margin, y: p2Y, size: 20, font: fontBold, color: colDark });
+      p2Y -= 18;
+      page2.drawText(pdfSafe('Methodology, assumptions and benchmark data behind your results.'), { x: margin, y: p2Y, size: 10, font: fontRegular, color: colMuted });
+      p2Y -= 28;
+
+      p2Y -= 14;
+      p2Y += 20;
+
+      // ── Helper: draw a two-column explanation block ──────────────────────
+      // Left col (30%): metric/value label  Right col (70%): explanation text
+      var colLeftW  = Math.floor(contentW * 0.30);
+      var colRightW = Math.floor(contentW * 0.68);
+      var colRightX = margin + colLeftW + Math.floor(contentW * 0.02);
+
+      // Sanitise strings for Helvetica — replace chars outside latin-1 range
+      function pdfSafe(str) {
+        if (!str) return '';
+        return str
+          .replace(/\u2014/g, '-')   // em dash
+          .replace(/\u2013/g, '-')   // en dash
+          .replace(/\u00d7/g, 'x')   // multiplication sign x
+          .replace(/\u00f7/g, '/')   // division sign
+          .replace(/\u20ac/g, 'EUR') // euro sign
+          .replace(/\u00a3/g, 'GBP') // pound sign
+          .replace(/[^\x00-\xFF]/g, '?'); // anything else outside latin-1
+      }
+
+      // Draws a full explanation block with title, then N rows of [value | explanation]
+      // Returns the new Y position after the block
+      function drawExplainBlock(title, rows, startY) {
+        var bY = startY;
+
+        // Block title bar (light grey background)
+        var titleBarH = 22;
+        page2.drawRectangle({ x: margin, y: bY - titleBarH, width: contentW, height: titleBarH, color: colBgGray, borderColor: colBorder, borderWidth: 1 });
+        page2.drawText(pdfSafe(title), { x: margin + 10, y: bY - titleBarH + 7, size: 11, font: fontBold, color: colDark });
+        bY -= (titleBarH + 12);
+
+        for (var ri = 0; ri < rows.length; ri++) {
+          var row = rows[ri];
+          var safeVal = pdfSafe(row.value);
+          var safeExp = pdfSafe(row.explain);
+          var valLines  = wrapText(safeVal, fontBold,    9,   colLeftW - 6);
+          var expLines  = wrapText(safeExp, fontRegular, 8.5, colRightW - 6);
+          var rowH = Math.max(valLines.length, expLines.length) * 10 + 10;
+
+          // Left: value/metric (bold, orange if it's a number-like string)
+          var valY = bY - 8;
+          valLines.forEach(function(vl) {
+            page2.drawText(vl, { x: margin, y: valY, size: 9, font: fontBold, color: colDark });
+            valY -= 10;
+          });
+
+          // Right: explanation text (regular, muted)
+          var expY = bY - 8;
+          expLines.forEach(function(el) {
+            page2.drawText(el, { x: colRightX, y: expY, size: 8.5, font: fontRegular, color: colMuted });
+            expY -= 10;
+          });
+
+          bY -= rowH;
+
+          // Row divider (not after last row)
+          if (ri < rows.length - 1) {
+            page2.drawLine({ start: { x: margin, y: bY }, end: { x: width - margin, y: bY }, thickness: 0.5, color: colBorder });
+            bY -= 8;
+          }
+        }
+
+        // Bottom border of block
+        page2.drawLine({ start: { x: margin, y: bY - 4 }, end: { x: width - margin, y: bY - 4 }, thickness: 1, color: colBorder });
+        return bY - 18;
+      }
+
+      // Collect live values for the explanations
+      var p2Industry  = qs('#industry').value;
+      var p2TurnRed   = (INDUSTRY_TURNOVER_REDUCTION[p2Industry] || 17);
+      var p2CurrSym   = selectedCurrency === 'EUR' ? 'EUR ' : '$';
+
+      var p2AvgSalary = qs('#avgSalary').value.trim() !== ''
+        ? p2CurrSym + Number(qs('#avgSalary').value).toLocaleString('en-US')
+        : (INDUSTRY_SALARY[p2Industry] ? p2CurrSym + INDUSTRY_SALARY[p2Industry].val.toLocaleString('en-US') + ' (benchmark)' : '—');
+
+      var p2Turnover = qs('#currentTurnover').value.trim() !== ''
+        ? qs('#currentTurnover').value + '%'
+        : (INDUSTRY_TURNOVER_BASELINE[p2Industry] ? INDUSTRY_TURNOVER_BASELINE[p2Industry].val + '% (benchmark)' : '—');
+
+      var p2CostPerCoachee = qs('#costPerCoachee').value.trim() !== ''
+        ? p2CurrSym + Number(qs('#costPerCoachee').value).toLocaleString('en-US')
+        : (INDUSTRY_COST[p2Industry] ? p2CurrSym + INDUSTRY_COST[p2Industry].val.toLocaleString('en-US') + ' (benchmark)' : '—');
+
+      var p2NumCoachees  = qs('#numCoachees').value  || '—';
+      var p2NumEmployees = qs('#numEmployees').value || '—';
+      var p2Revenue      = qs('#annualRevenue').value.trim() !== ''
+        ? p2CurrSym + Number(qs('#annualRevenue').value).toLocaleString('en-US')
+        : (INDUSTRY_REVENUE[p2Industry] ? INDUSTRY_REVENUE[p2Industry].label : '—');
+
+      var p2PostTurnover = (Number(p2Turnover) * (1 - p2TurnRed / 100)).toFixed(1);
+      var p2IndustryName = getSelectText('industry');
+      var p2RegionName   = getSelectText('region');
+
+      // ── BLOCK 1: Company Profile ─────────────────────────────────────────
+      p2Y = drawExplainBlock('1.  Company Profile', [
+        {
+          value:   p2RegionName || '—',
+          explain: 'Your selected region. Used to contextualise benchmarks and denomination of all monetary values (' + (selectedCurrency === 'EUR' ? 'EUR' : 'USD') + ') throughout this report.'
+        },
+        {
+          value:   p2IndustryName || '—',
+          explain: 'Your selected industry. All benchmark values - average salary, program cost, turnover rate, and coaching impact - are calibrated to this sector using 2024-2025 coaching effectiveness research and market data.'
+        },
+        {
+          value:   p2NumEmployees + ' employees',
+          explain: 'Total headcount provides organisational context. It is used to benchmark the coachee cohort size and scale the program\'s impact relative to your full workforce.'
+        },
+        {
+          value:   p2Revenue,
+          explain: 'Annual company revenue. Beyond retention savings, effective leadership coaching contributes to stronger decision-making, collaboration, and business agility. This is modelled as a 10 basis-point lift per coachee on company profit at an assumed 6% margin. Leave blank to use the industry benchmark.'
+        }
+      ], p2Y);
+
+      // ── BLOCK 2: Turnover Assumptions ────────────────────────────────────
+      // Callout above block
+      var b2CalloutLines = wrapText(pdfSafe('Turnover is expensive. Replacing a senior leader costs ~100% of their annual salary (recruitment, onboarding, lost productivity). Every leader retained through coaching avoids that cost.'), fontBold, 9, contentW);
+      b2CalloutLines.forEach(function(line) {
+        page2.drawText(line, { x: margin, y: p2Y, size: 9, font: fontBold, color: colDark });
+        p2Y -= 13;
+      });
+      p2Y -= 10;
+      p2Y = drawExplainBlock('2.  Turnover Assumptions', [
+        {
+          value:   p2Turnover,
+          explain: 'Your current annual leadership turnover rate. This is the baseline from which coaching-driven retention savings are calculated. Replacing a senior leader typically costs 100% of their annual salary - making this the primary financial lever of coaching ROI. Industry benchmark applied if left blank.'
+        },
+        {
+          value:   p2TurnRed + '% reduction',
+          explain: 'The expected reduction in leadership turnover attributable to 1:1 executive coaching. When leaders are coached to communicate better, manage stress, and build resilient teams, they are less likely to leave - and less likely to drive others out. This figure is industry-specific, derived from 2024-2025 research. Examples: Hospitality 25%, Banking 20%, IT 16%, Public Sector 10%.'
+        },
+        {
+          value:   '5% spillover',
+          explain: 'Coaching leaders creates a measurable spillover effect on their teams. Employees who work under better-led, more self-aware managers report higher engagement and lower intention to leave. A fixed 5% reduction in team turnover is applied across all direct reports.'
+        },
+        {
+          value:   '6 direct reports',
+          explain: 'Each coachee is assumed to manage approximately 6 direct reports - a global average for people-manager roles. Total team impact = number of coachees x 6. This reflects the organisational multiplier effect of coaching: one developed leader positively influences an entire team.'
+        },
+        {
+          value:   '100% of salary',
+          explain: 'Replacement cost per departing employee is set at 100% of their annual salary. This covers recruitment fees, onboarding time, ramp-up period, and lost productivity during transition - a widely used conservative benchmark in HR and talent literature.'
+        }
+      ], p2Y);
+
+      // PAGE 2 — Disclaimer (pinned to bottom margin)
+      var dis2Text  = pdfSafe('Disclaimer: ' + disclaimerText + ' All values are estimates based on typical benchmarks and assumptions. Actual outcomes will depend on programme design, coachee engagement, management support, and broader business conditions.');
+      var dis2Lines = wrapText(dis2Text, fontRegular, 7, contentW);
+      var dis2LineY = margin + ((dis2Lines.length - 1) * 10);
+      dis2Lines.forEach(function(line, idx) {
+        if (idx === 0 && line.startsWith('Disclaimer')) {
+          page2.drawText('Disclaimer', { x: margin, y: dis2LineY, size: 7, font: fontBold, color: colDark });
+          var off2 = fontBold.widthOfTextAtSize('Disclaimer', 7);
+          page2.drawText(line.substring(10), { x: margin + off2, y: dis2LineY, size: 7, font: fontRegular, color: colMuted });
+        } else {
+          page2.drawText(line, { x: margin, y: dis2LineY, size: 7, font: fontRegular, color: colMuted });
+        }
+        dis2LineY -= 10;
+      });
+
+      // =====================================================================
+      // PAGE 3: Coaching Program & Financial Results
+      // =====================================================================
+      var page3 = pdfDoc.addPage([595.28, 841.89]);
+
+      // PAGE 3 — Logo (identical placement)
+      var logo3Png   = await svgToPngDataUrl(SPEEXX_LOGO_SVG, 300, 65);
+      var logo3Image = await pdfDoc.embedPng(logo3Png);
+      page3.drawImage(logo3Image, { x: margin, y: height - logoTopY - logoH, width: logoW, height: logoH });
+
+      // PAGE 3 — Title block
+      var p3Y = height - 118.5;
+      page3.drawText(pdfSafe('Understanding Your ROI Report (continued)'), { x: margin, y: p3Y, size: 20, font: fontBold, color: colDark });
+      p3Y -= 18;
+      page3.drawText(pdfSafe('Coaching program inputs and financial results methodology.'), { x: margin, y: p3Y, size: 10, font: fontRegular, color: colMuted });
+      p3Y -= 28;
+      p3Y -= 14;
+      p3Y += 20;
+
+      // Reuse drawExplainBlock — it closes over page2, so we need a page3 version
+      function drawExplainBlockP3(title, rows, startY) {
+        var bY = startY;
+        var titleBarH = 22;
+        page3.drawRectangle({ x: margin, y: bY - titleBarH, width: contentW, height: titleBarH, color: colBgGray, borderColor: colBorder, borderWidth: 1 });
+        page3.drawText(pdfSafe(title), { x: margin + 10, y: bY - titleBarH + 7, size: 11, font: fontBold, color: colDark });
+        bY -= (titleBarH + 12);
+
+        for (var ri = 0; ri < rows.length; ri++) {
+          var row = rows[ri];
+          var safeVal = pdfSafe(row.value);
+          var safeExp = pdfSafe(row.explain);
+          var valLines = wrapText(safeVal, fontBold,    9,   colLeftW - 6);
+          var expLines = wrapText(safeExp, fontRegular, 8.5, colRightW - 6);
+          var rowH = Math.max(valLines.length, expLines.length) * 10 + 10;
+
+          var isNumeric = /^[\$0-9%\.x\-\+k MEU]+$/.test(safeVal.trim());
+          var valColor  = isNumeric ? colOrange : colDark;
+          var valY = bY - 8;
+          valLines.forEach(function(vl) {
+            page3.drawText(vl, { x: margin, y: valY, size: 9, font: fontBold, color: valColor });
+            valY -= 10;
+          });
+
+          var expY = bY - 8;
+          expLines.forEach(function(el) {
+            page3.drawText(el, { x: colRightX, y: expY, size: 8.5, font: fontRegular, color: colMuted });
+            expY -= 10;
+          });
+
+          bY -= rowH;
+
+          if (ri < rows.length - 1) {
+            page3.drawLine({ start: { x: margin, y: bY }, end: { x: width - margin, y: bY }, thickness: 0.5, color: colBorder });
+            bY -= 8;
+          }
+        }
+        page3.drawLine({ start: { x: margin, y: bY - 4 }, end: { x: width - margin, y: bY - 4 }, thickness: 1, color: colBorder });
+        return bY - 18;
+      }
+
+      // ── BLOCK 3: Coaching Program ─────────────────────────────────────────
+      p3Y = drawExplainBlockP3('3.  Coaching Program', [
+        {
+          value:   p2NumCoachees + ' coachees',
+          explain: 'The number of executives or people-leaders enrolled in the 1:1 coaching program. Each coachee generates a direct retention benefit (their own reduced likelihood of leaving) and an indirect benefit (their team\'s improved stability and engagement). The combined effect is the foundation of the ROI calculation.'
+        },
+        {
+          value:   p2AvgSalary,
+          explain: 'Average annual salary of each coachee. This is the key input for the direct savings calculation: when a coached leader is retained, the organisation avoids a replacement cost equal to their full annual salary. Industry benchmark applied automatically if left blank.'
+        },
+        {
+          value:   p2CostPerCoachee + ' / coachee',
+          explain: 'The full program cost per participant for a complete 1:1 executive coaching engagement - typically 12 or more hours of structured, goal-oriented sessions with a certified coach. This is the total investment against which the ROI is calculated. Industry benchmark applied if left blank.'
+        },
+        {
+          value:   'Direct reports @ 65%',
+          explain: 'Team member salaries are assumed at 65% of the leader\'s salary. This ratio is applied when calculating the indirect (team spillover) retention savings: retaining a team member avoids a replacement cost of 65% of the leader salary. It reflects the typical compensation differential between manager and team member levels.'
+        }
+      ], p3Y);
+
+      // ── BLOCK 4: Financial Results & Methodology ─────────────────────────
+      // Callout above block
+      var b4CalloutLines = wrapText(pdfSafe('Leadership drives retention. Coached executives develop stronger communication and resilience - reducing their own likelihood of leaving and improving their team\'s stability too.'), fontBold, 9, contentW);
+      b4CalloutLines.forEach(function(line) {
+        page3.drawText(line, { x: margin, y: p3Y, size: 9, font: fontBold, color: colDark });
+        p3Y -= 13;
+      });
+      p3Y -= 10;
+      p3Y = drawExplainBlockP3('4.  Financial Results & Methodology', [
+        {
+          value:   benefitText + ' total benefits',
+          explain: 'Total benefits = Direct savings (leader retention) + Indirect savings (team spillover) + Profit improvement. Formula: (leaders retained x avg salary) + (team members retained x avg salary x 65%) + (revenue x 6% margin x 0.01% x coachees). Retention savings are the primary driver; profit improvement reflects the broader business impact of stronger leadership.'
+        },
+        {
+          value:   investmentText + ' investment',
+          explain: 'Total investment = cost per coachee x number of coachees. This is the full program spend and the denominator in the ROI formula. Digital coaching platforms can reduce this cost further by eliminating room hire, travel, and manual scheduling overhead.'
+        },
+        {
+          value:   multiplierText + ' multiplier',
+          explain: 'The cost multiplier shows how many times the investment is returned in total measurable benefits. A multiplier of 3x means every dollar or euro invested in coaching returns three times that value. Beyond these quantified benefits, coaching also improves workplace relationships, deepens employee engagement, and builds the adaptive, resilient culture organisations need to stay competitive.'
+        },
+        {
+          value:   roiText + ' ROI',
+          explain: 'ROI = (Total Benefits - Total Investment) / Total Investment x 100. This is the net return expressed as a percentage of the program cost. The calculation applies conservative, research-backed assumptions throughout. Use this figure as a directional business case - combine with your own organisational data for budgeting decisions.'
+        }
+      ], p3Y);
+
+      // PAGE 3 — Disclaimer (pinned to bottom margin)
+      var dis3Text  = pdfSafe('Disclaimer: ' + disclaimerText + ' All values are estimates based on typical benchmarks and assumptions. Actual outcomes will depend on programme design, coachee engagement, management support, and broader business conditions.');
+      var dis3Lines = wrapText(dis3Text, fontRegular, 7, contentW);
+      var dis3LineY = margin + ((dis3Lines.length - 1) * 10);
+      dis3Lines.forEach(function(line, idx) {
+        if (idx === 0 && line.startsWith('Disclaimer')) {
+          page3.drawText('Disclaimer', { x: margin, y: dis3LineY, size: 7, font: fontBold, color: colDark });
+          var off3 = fontBold.widthOfTextAtSize('Disclaimer', 7);
+          page3.drawText(line.substring(10), { x: margin + off3, y: dis3LineY, size: 7, font: fontRegular, color: colMuted });
+        } else {
+          page3.drawText(line, { x: margin, y: dis3LineY, size: 7, font: fontRegular, color: colMuted });
+        }
+        dis3LineY -= 10;
+      });
+
+      // Save & Download
+      var pdfBytes = await pdfDoc.save();
+      var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      var url  = URL.createObjectURL(blob);
+      var a    = document.createElement('a');
+      a.href = url;
+      a.download = 'Speexx_Executive_Coaching_ROI_Report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var dlBtn = qs('#downloadReportBtn');
+      if (dlBtn) {
+        dlBtn.addEventListener('click', function () { generatePdfReport(); });
+      }
+    });
+  </script>
+</body>
+</html>
