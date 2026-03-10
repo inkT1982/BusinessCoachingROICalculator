@@ -2068,10 +2068,13 @@
         { label: 'ROI',               value: roiText }
       ]);
 
-      // ZONE 8: Disclaimer (pinned to bottom margin)
+      // ZONE 8: Disclaimer (pinned to bottom margin) — 80% width, Contact Us button on right
+      var disLineH = 8.5; // 15% reduction from 10
+      var disW     = contentW * 0.80;
       var disText  = pdfSafe('Disclaimer: ' + disclaimerText + ' All values are estimates based on typical benchmarks and assumptions. Actual outcomes will depend on programme design, coachee engagement, management support, and broader business conditions.');
-      var disLines = wrapText(disText, fontRegular, 7, contentW);
-      var disLineY = margin + ((disLines.length - 1) * 10);
+      var disLines = wrapText(disText, fontRegular, 7, disW);
+      var disBlockH = (disLines.length - 1) * disLineH;
+      var disLineY = margin + disBlockH;
       disLines.forEach(function(line, idx) {
         if (idx === 0 && line.startsWith('Disclaimer')) {
           page.drawText('Disclaimer', { x: margin, y: disLineY, size: 7, font: fontBold, color: colDark });
@@ -2080,8 +2083,40 @@
         } else {
           page.drawText(line, { x: margin, y: disLineY, size: 7, font: fontRegular, color: colMuted });
         }
-        disLineY -= 10;
+        disLineY -= disLineH;
       });
+      // Contact Us button — right-aligned, vertically centred against disclaimer block
+      var ctaBtnW    = contentW * 0.20 - 10;
+      var ctaBtnH    = 28;
+      var ctaBtnX    = margin + contentW - ctaBtnW;
+      var ctaBtnY    = margin + disBlockH / 2 - ctaBtnH / 2;
+      var colOrangeCTA = rgb(1, 0.4706, 0); // #FF7900
+      var colWhite     = rgb(1, 1, 1);
+      page.drawRectangle({ x: ctaBtnX, y: ctaBtnY, width: ctaBtnW, height: ctaBtnH, color: colOrangeCTA });
+      var ctaText    = 'CONTACT US';
+      var ctaSize    = 9;
+      var ctaSpacing = 1.0; // letter-spacing ~100
+      var ctaCharW   = fontBold.widthOfTextAtSize(ctaText, ctaSize) + (ctaText.length - 1) * ctaSpacing;
+      var ctaTextX   = ctaBtnX + (ctaBtnW - ctaCharW) / 2;
+      // True vertical centre: baseline = btnY + (btnH - capHeight) / 2, capHeight ≈ size * 0.72
+      var ctaTextY   = ctaBtnY + (ctaBtnH - ctaSize * 0.72) / 2;
+      var ctaChars   = ctaText.split('');
+      var ctaCurX    = ctaTextX;
+      ctaChars.forEach(function(ch) {
+        page.drawText(ch, { x: ctaCurX, y: ctaTextY, size: ctaSize, font: fontBold, color: colWhite });
+        ctaCurX += fontBold.widthOfTextAtSize(ch, ctaSize) + ctaSpacing;
+      });
+      page.drawRectangle({ x: ctaBtnX, y: ctaBtnY, width: ctaBtnW, height: ctaBtnH, borderColor: colOrangeCTA, borderWidth: 0 });
+      // Clickable link annotation
+      page.node.set(PDFLib.PDFName.of('Annots'), pdfDoc.context.obj([
+        pdfDoc.context.obj({
+          Type: 'Annot',
+          Subtype: 'Link',
+          Rect: [ctaBtnX, ctaBtnY, ctaBtnX + ctaBtnW, ctaBtnY + ctaBtnH],
+          Border: [0, 0, 0],
+          A: { Type: 'Action', S: 'URI', URI: PDFLib.PDFString.of('https://www.speexx.com/business-coaching-platform/') }
+        })
+      ]));
 
       // =====================================================================
       // PAGE 2: Methodology & Explanations
@@ -2251,10 +2286,13 @@
         }
       ], p2Y);
 
-      // PAGE 2 — Disclaimer (pinned to bottom margin)
+      // PAGE 2 — Disclaimer (pinned to bottom margin) — 80% width, Contact Us button on right
+      var dis2LineH = 8.5; // 15% reduction from 10
+      var dis2W     = contentW * 0.80;
       var dis2Text  = pdfSafe('Disclaimer: ' + disclaimerText + ' All values are estimates based on typical benchmarks and assumptions. Actual outcomes will depend on programme design, coachee engagement, management support, and broader business conditions.');
-      var dis2Lines = wrapText(dis2Text, fontRegular, 7, contentW);
-      var dis2LineY = margin + ((dis2Lines.length - 1) * 10);
+      var dis2Lines = wrapText(dis2Text, fontRegular, 7, dis2W);
+      var dis2BlockH = (dis2Lines.length - 1) * dis2LineH;
+      var dis2LineY = margin + dis2BlockH;
       dis2Lines.forEach(function(line, idx) {
         if (idx === 0 && line.startsWith('Disclaimer')) {
           page2.drawText('Disclaimer', { x: margin, y: dis2LineY, size: 7, font: fontBold, color: colDark });
@@ -2263,8 +2301,37 @@
         } else {
           page2.drawText(line, { x: margin, y: dis2LineY, size: 7, font: fontRegular, color: colMuted });
         }
-        dis2LineY -= 10;
+        dis2LineY -= dis2LineH;
       });
+      // Contact Us button — page 2
+      var cta2BtnW  = contentW * 0.20 - 10;
+      var cta2BtnH  = 28;
+      var cta2BtnX  = margin + contentW - cta2BtnW;
+      var cta2BtnY  = margin + dis2BlockH / 2 - cta2BtnH / 2;
+      var colOrangeCTA2 = rgb(1, 0.4706, 0);
+      var colWhite2     = rgb(1, 1, 1);
+      page2.drawRectangle({ x: cta2BtnX, y: cta2BtnY, width: cta2BtnW, height: cta2BtnH, color: colOrangeCTA2 });
+      var cta2Text    = 'CONTACT US';
+      var cta2Size    = 9;
+      var cta2Spacing = 1.0;
+      var cta2CharW   = fontBold.widthOfTextAtSize(cta2Text, cta2Size) + (cta2Text.length - 1) * cta2Spacing;
+      var cta2TextX   = cta2BtnX + (cta2BtnW - cta2CharW) / 2;
+      var cta2TextY   = cta2BtnY + (cta2BtnH - cta2Size * 0.72) / 2;
+      var cta2Chars   = cta2Text.split('');
+      var cta2CurX    = cta2TextX;
+      cta2Chars.forEach(function(ch) {
+        page2.drawText(ch, { x: cta2CurX, y: cta2TextY, size: cta2Size, font: fontBold, color: colWhite2 });
+        cta2CurX += fontBold.widthOfTextAtSize(ch, cta2Size) + cta2Spacing;
+      });
+      page2.node.set(PDFLib.PDFName.of('Annots'), pdfDoc.context.obj([
+        pdfDoc.context.obj({
+          Type: 'Annot',
+          Subtype: 'Link',
+          Rect: [cta2BtnX, cta2BtnY, cta2BtnX + cta2BtnW, cta2BtnY + cta2BtnH],
+          Border: [0, 0, 0],
+          A: { Type: 'Action', S: 'URI', URI: PDFLib.PDFString.of('https://www.speexx.com/business-coaching-platform/') }
+        })
+      ]));
 
       // =====================================================================
       // PAGE 3: Coaching Program & Financial Results
@@ -2373,10 +2440,13 @@
         }
       ], p3Y);
 
-      // PAGE 3 — Disclaimer (pinned to bottom margin)
+      // PAGE 3 — Disclaimer (pinned to bottom margin) — 80% width, Contact Us button on right
+      var dis3LineH = 8.5; // 15% reduction from 10
+      var dis3W     = contentW * 0.80;
       var dis3Text  = pdfSafe('Disclaimer: ' + disclaimerText + ' All values are estimates based on typical benchmarks and assumptions. Actual outcomes will depend on programme design, coachee engagement, management support, and broader business conditions.');
-      var dis3Lines = wrapText(dis3Text, fontRegular, 7, contentW);
-      var dis3LineY = margin + ((dis3Lines.length - 1) * 10);
+      var dis3Lines = wrapText(dis3Text, fontRegular, 7, dis3W);
+      var dis3BlockH = (dis3Lines.length - 1) * dis3LineH;
+      var dis3LineY = margin + dis3BlockH;
       dis3Lines.forEach(function(line, idx) {
         if (idx === 0 && line.startsWith('Disclaimer')) {
           page3.drawText('Disclaimer', { x: margin, y: dis3LineY, size: 7, font: fontBold, color: colDark });
@@ -2385,8 +2455,37 @@
         } else {
           page3.drawText(line, { x: margin, y: dis3LineY, size: 7, font: fontRegular, color: colMuted });
         }
-        dis3LineY -= 10;
+        dis3LineY -= dis3LineH;
       });
+      // Contact Us button — page 3
+      var cta3BtnW  = contentW * 0.20 - 10;
+      var cta3BtnH  = 28;
+      var cta3BtnX  = margin + contentW - cta3BtnW;
+      var cta3BtnY  = margin + dis3BlockH / 2 - cta3BtnH / 2;
+      var colOrangeCTA3 = rgb(1, 0.4706, 0);
+      var colWhite3     = rgb(1, 1, 1);
+      page3.drawRectangle({ x: cta3BtnX, y: cta3BtnY, width: cta3BtnW, height: cta3BtnH, color: colOrangeCTA3 });
+      var cta3Text    = 'CONTACT US';
+      var cta3Size    = 9;
+      var cta3Spacing = 1.0;
+      var cta3CharW   = fontBold.widthOfTextAtSize(cta3Text, cta3Size) + (cta3Text.length - 1) * cta3Spacing;
+      var cta3TextX   = cta3BtnX + (cta3BtnW - cta3CharW) / 2;
+      var cta3TextY   = cta3BtnY + (cta3BtnH - cta3Size * 0.72) / 2;
+      var cta3Chars   = cta3Text.split('');
+      var cta3CurX    = cta3TextX;
+      cta3Chars.forEach(function(ch) {
+        page3.drawText(ch, { x: cta3CurX, y: cta3TextY, size: cta3Size, font: fontBold, color: colWhite3 });
+        cta3CurX += fontBold.widthOfTextAtSize(ch, cta3Size) + cta3Spacing;
+      });
+      page3.node.set(PDFLib.PDFName.of('Annots'), pdfDoc.context.obj([
+        pdfDoc.context.obj({
+          Type: 'Annot',
+          Subtype: 'Link',
+          Rect: [cta3BtnX, cta3BtnY, cta3BtnX + cta3BtnW, cta3BtnY + cta3BtnH],
+          Border: [0, 0, 0],
+          A: { Type: 'Action', S: 'URI', URI: PDFLib.PDFString.of('https://www.speexx.com/business-coaching-platform/') }
+        })
+      ]));
 
       // Save & Download
       var pdfBytes = await pdfDoc.save();
