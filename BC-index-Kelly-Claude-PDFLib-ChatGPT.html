@@ -547,7 +547,8 @@
       margin-top: 4px;
     }
 
-    .result-card {
+    .result-card,
+    .result-card_pdf {
       border-radius: 24px;
       background: radial-gradient(circle at top, rgba(3, 139, 199, 0.3), rgba(7, 11, 22, 0.98));
       border: 1px solid rgba(3, 139, 199, 0.8);
@@ -559,7 +560,8 @@
       margin-bottom: 6px;
     }
 
-    .result-card::before {
+    .result-card::before,
+    .result-card_pdf::before {
       content: "";
       position: absolute;
       top: -40%;
@@ -574,7 +576,8 @@
       pointer-events: none;
     }
 
-    .result-inner {
+    .result-inner,
+    .result-inner_pdf {
       position: relative;
       z-index: 1;
       display: -webkit-box;
@@ -587,20 +590,23 @@
       gap: 14px;
     }
 
-    .result-title {
+    .result-title,
+    .result-title_pdf {
       font-size: 1.12rem;
       margin: 0 0 6px;
       font-weight: 600;
     }
 
-    .result-subtitle {
+    .result-subtitle,
+    .result-subtitle_pdf {
       font-size: 0.88rem;
       color: #ced9ff;
       margin: 0;
       line-height: 1.6;
     }
 
-    .results-grid {
+    .results-grid,
+    .results-grid_pdf {
       display: -ms-grid;
       display: grid;
       -ms-grid-columns: (minmax(0, 1fr))[2];
@@ -609,14 +615,16 @@
       margin-top: 4px;
     }
 
-    .result-metric {
+    .result-metric,
+    .result-metric_pdf {
       border-radius: 16px;
       background: rgba(7, 11, 23, 0.98);
       border: 1px solid rgba(255, 255, 255, 0.08);
       padding: 11px 12px 10px;
     }
 
-    .result-metric-label {
+    .result-metric-label,
+    .result-metric-label_pdf {
       font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -624,7 +632,8 @@
       margin-bottom: 4px;
     }
 
-    .result-metric-value {
+    .result-metric-value,
+    .result-metric-value_pdf {
       font-size: 1.22rem;
       font-weight: 600;
       line-height: 1.3;
@@ -632,20 +641,23 @@
       color: #f7f9ff;
     }
 
-    .result-metric-sub {
+    .result-metric-sub,
+    .result-metric-sub_pdf {
       font-size: 0.78rem;
       color: #8b93b0;
       line-height: 1.5;
     }
 
-    .result-helper {
+    .result-helper,
+    .result-helper_pdf {
       font-size: 0.82rem;
       color: #d0daff;
       margin-top: 10px;
       line-height: 1.6;
     }
 
-    .assumptions-card {
+    .assumptions-card,
+    .assumptions-card_pdf {
       border-radius: 18px;
       background: rgba(8, 11, 20, 0.9);
       border: 1px dashed rgba(148, 163, 184, 0.45);
@@ -662,7 +674,8 @@
       gap: 8px;
     }
 
-    .assumptions-title {
+    .assumptions-title,
+    .assumptions-title_pdf {
       font-size: 0.88rem;
       font-weight: 600;
       color: #c0c8e0;
@@ -676,7 +689,8 @@
       margin-bottom: 2px;
     }
 
-    .assumption-bullet {
+    .assumption-bullet,
+    .assumption-bullet_pdf {
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
@@ -687,7 +701,8 @@
       line-height: 1.65;
     }
 
-    .assumption-bullet span:first-child {
+    .assumption-bullet span:first-child,
+    .assumption-bullet_pdf span:first-child {
       font-size: 0.85rem;
       color: #38b8e8;
       margin-top: 2px;
@@ -730,7 +745,8 @@
     }
 
     @media (max-width: 900px) {
-      .results-grid {
+      .results-grid,
+      .results-grid_pdf {
         -ms-grid-columns: 1fr;
         grid-template-columns: 1fr;
       }
@@ -767,7 +783,8 @@
 
     #downloadReportBtn.ready:hover { filter: brightness(1.05); }
 
-    .disclaimer-text {
+    .disclaimer-text,
+    .disclaimer-text_pdf {
       font-size: 0.76rem;
       color: #6c7390;
       margin-top: 10px;
@@ -1044,65 +1061,65 @@
       <!-- RIGHT PANEL: RESULTS -->
       <section class="right-panel">
         <div id="resultSection" style="display: none;">
-          <div class="result-card">
-            <div class="result-inner">
+          <div class="result-card result-card_pdf">
+            <div class="result-inner result-inner_pdf">
               <div>
-                <h2 class="result-title">Your Coaching ROI</h2>
-                <p class="result-subtitle">Retention is the primary value driver. When leaders stay, teams stabilise, costs are avoided, and performance improves.</p>
+                <h2 class="result-title result-title_pdf">Your Coaching ROI</h2>
+                <p class="result-subtitle result-subtitle_pdf">Retention is the primary value driver. When leaders stay, teams stabilise, costs are avoided, and performance improves.</p>
               </div>
 
-              <div class="results-grid">
-                <div class="result-metric">
-                  <div class="result-metric-label">ROI (%)</div>
-                  <div class="result-metric-value" id="roiValue">—</div>
-                  <div class="result-metric-sub">Net return on program cost</div>
+              <div class="results-grid results-grid_pdf">
+                <div class="result-metric result-metric_pdf">
+                  <div class="result-metric-label result-metric-label_pdf">ROI (%)</div>
+                  <div class="result-metric-value result-metric-value_pdf" id="roiValue">—</div>
+                  <div class="result-metric-sub result-metric-sub_pdf">Net return on program cost</div>
                 </div>
-                <div class="result-metric">
-                  <div class="result-metric-label">Total Benefits</div>
-                  <div class="result-metric-value" id="totalBenefitValue">—</div>
-                  <div class="result-metric-sub">Retention savings + profit lift</div>
+                <div class="result-metric result-metric_pdf">
+                  <div class="result-metric-label result-metric-label_pdf">Total Benefits</div>
+                  <div class="result-metric-value result-metric-value_pdf" id="totalBenefitValue">—</div>
+                  <div class="result-metric-sub result-metric-sub_pdf">Retention savings + profit lift</div>
                 </div>
-                <div class="result-metric">
-                  <div class="result-metric-label">Total Investment</div>
-                  <div class="result-metric-value" id="investmentValue">—</div>
-                  <div class="result-metric-sub">Full program cost</div>
+                <div class="result-metric result-metric_pdf">
+                  <div class="result-metric-label result-metric-label_pdf">Total Investment</div>
+                  <div class="result-metric-value result-metric-value_pdf" id="investmentValue">—</div>
+                  <div class="result-metric-sub result-metric-sub_pdf">Full program cost</div>
                 </div>
-                <div class="result-metric">
-                  <div class="result-metric-label">Cost Multiplier</div>
-                  <div class="result-metric-value" id="multiplierValue">—</div>
-                  <div class="result-metric-sub">Return per unit invested</div>
+                <div class="result-metric result-metric_pdf">
+                  <div class="result-metric-label result-metric-label_pdf">Cost Multiplier</div>
+                  <div class="result-metric-value result-metric-value_pdf" id="multiplierValue">—</div>
+                  <div class="result-metric-sub result-metric-sub_pdf">Return per unit invested</div>
                 </div>
               </div>
 
-              <div class="result-helper">
+              <div class="result-helper result-helper_pdf">
                 <strong>Breakdown:</strong> <span id="resultBreakdown">—</span>
               </div>
             </div>
           </div>
 
-          <div class="assumptions-card">
-            <div class="assumptions-title">📋 How This Is Calculated</div>
-            <div class="assumption-bullet">
+          <div class="assumptions-card assumptions-card_pdf">
+            <div class="assumptions-title assumptions-title_pdf">📋 How This Is Calculated</div>
+            <div class="assumption-bullet assumption-bullet_pdf">
               <span>✓</span>
               <span><strong>Coaching builds the skills that drive retention.</strong> Leaders who communicate better, manage stress, and build resilient teams are less likely to leave — and less likely to drive others out.</span>
             </div>
-            <div class="assumption-bullet">
+            <div class="assumption-bullet assumption-bullet_pdf">
               <span>✓</span>
               <span><strong>Retention protects business performance.</strong> Replacing a senior leader costs ~100% of their annual salary — recruiting, onboarding, and lost productivity included. Every coached leader retained avoids that cost entirely.</span>
             </div>
-            <div class="assumption-bullet">
+            <div class="assumption-bullet assumption-bullet_pdf">
               <span>✓</span>
               <span><strong>Industry-calibrated impact.</strong> Turnover reduction is sector-specific, from 2024–2025 research. Examples: Hospitality 25%, Banking 20%, IT 16%, Public Sector 10%.</span>
             </div>
-            <div class="assumption-bullet">
+            <div class="assumption-bullet assumption-bullet_pdf">
               <span>✓</span>
               <span><strong>Better leaders retain better teams (5% spillover).</strong> Each leader manages ~6 direct reports. Employees under well-coached managers report higher engagement and lower intent to leave — modelled at 65% of the leader's salary.</span>
             </div>
-            <div class="assumption-bullet">
+            <div class="assumption-bullet assumption-bullet_pdf">
               <span>✓</span>
               <span><strong>Profit improvement.</strong> Stronger leadership lifts business performance, modelled as a 10 basis-point gain per coachee on company profit (6% assumed margin).</span>
             </div>
-            <div class="assumption-bullet">
+            <div class="assumption-bullet assumption-bullet_pdf">
               <span>ℹ️</span>
               <span><strong>ROI = (Benefits − Investment) ÷ Investment.</strong> Benefits cover leader retention, team spillover, and profit improvement. All figures are directional estimates.</span>
             </div>
@@ -1111,7 +1128,7 @@
           <button type="button" id="downloadReportBtn" disabled>
             Download the Full Report
           </button>
-          <p class="disclaimer-text" id="disclaimerText">
+          <p class="disclaimer-text disclaimer-text_pdf" id="disclaimerText">
             Directional estimates for HR and business leaders. Use alongside your own organisational data for budgeting decisions.
           </p>
         </div>
